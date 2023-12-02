@@ -1,4 +1,4 @@
-# YARC - Yet Another Retirement Calculator
+# YARC-UI - Yet Another Retirement Calculator, User Interface
 
 YARC is a web application that is to be used as a tool for preparing financially for retirement. 
 
