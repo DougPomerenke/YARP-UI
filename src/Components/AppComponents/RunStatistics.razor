@@ -1,0 +1,40 @@
+﻿@page "/runstatistics"
+@rendermode InteractiveServer
+@using StatisticalTools;
+@attribute [StreamRendering(true)]
+@namespace FinancialPlanner.Components.AppComponents
+
+<table style="width: 100%;">
+    <thead>
+        <tr>
+            <th>Statistics</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width: 100%;">
+                <small>
+                    <p role="status">Scenario Run Count: @histogramBucket.NumberOfElements</p>
+                    <p role="status">Zero Account Balance Age Min: @histogramBucket.Min</p>
+                    <p role="status">Zero Account Balance Age Mean:@histogramBucket.Mean</p>
+                    <p role="status">Zero Account Balance Age Median: @histogramBucket.Median</p>
+                    <p role="status">Zero Account Balance Age Max: @histogramBucket.Max</p>
+                    <p role="status">-1 Sigma ~ 84% : @histogramBucket.MinusOneSigma</p>
+                </small>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+@code {
+    [Parameter]
+    public HistogramBucket histogramBucket { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+}

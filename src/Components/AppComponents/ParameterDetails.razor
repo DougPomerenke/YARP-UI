@@ -1,0 +1,41 @@
+﻿@page "/parameterdetails"
+@rendermode InteractiveServer
+@using FinancialPlanner.Components.Models;
+@attribute [StreamRendering(true)]
+@namespace FinancialPlanner.Components.AppComponents
+
+<small><table class="table" width="100%">
+    <thead>
+            <tr>
+                <th>Parameters</th>
+            </tr>
+        <tr>
+                <th width="1">Financial Event Starting Year</th>
+                <th width="1">Financial Event Type</th>
+                <th width="1">Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var scenarioParameters in ScenarioParametersList)
+        {
+            <tr>
+                <td>@scenarioParameters.LifeEventStartingYear</td>
+                <td>@scenarioParameters.LifeEventDisplayMessage</td>
+                <td>@scenarioParameters.DisplayValue</td>
+            </tr>
+        }
+    </tbody>
+</table></small>
+
+
+@code {
+    [Parameter]
+    public List<ScenarioParameters> ScenarioParametersList { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+}

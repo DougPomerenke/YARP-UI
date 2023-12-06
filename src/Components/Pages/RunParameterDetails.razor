@@ -1,0 +1,98 @@
+﻿@page "/runparameterdetails"
+@attribute [StreamRendering(true)]
+
+<PageTitle>Run Parameters</PageTitle>
+
+<p>Input Parameters.</p>
+
+@if (runparameters == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Starting Year</th>
+                <th>Year Of Birth</th>
+                <th>Retirement Age</th>
+                <th>Starting Balance</th>
+                <th>Annual Savings Contribution</th>
+                <th>Desired Monthly Income</th>
+                <th>Social Security Monthly Income</th>
+                <th>Annual Inflation Rate Range</th>
+                <th>Annual Investment Rate Of Return Range</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in runparameters)
+            {
+                <tr>
+                    <td>@forecast.StartingYear</td>
+                    <td>@forecast.YearOfBirth</td>
+                    <td>@forecast.RetirementAge</td>
+                    <td>@forecast.StartingBalance</td>
+                    <td>@forecast.AnnualSavingsContribution</td>
+                    <td>@forecast.DesiredMonthlyIncome</td>
+                    <td>@forecast.SocialSecurityMonthlyIncome</td>
+                    <td>@forecast.AnnualInflationRateRange[0] to @forecast.AnnualInflationRateRange[1]</td>
+                    <td>@forecast.AnnualInvestmentRateOfReturnRange[0] to @forecast.AnnualInvestmentRateOfReturnRange[1]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public int StartingYear { get; set; }
+    [Parameter]
+    public int YearOfBirth { get; set; }
+    [Parameter]
+    public int RetirementAge { get; set; }
+    [Parameter]
+    public decimal StartingBalance { get; set; }
+    [Parameter]
+    public decimal AnnualSavingsContribution { get; set; }
+    [Parameter]
+    public decimal DesiredMonthlyIncome { get; set; }
+    [Parameter]
+    public decimal SocialSecurityMonthlyIncome { get; set; }
+    [Parameter]
+    public decimal[]? AnnualInflationRateRange { get; set; }
+    [Parameter]
+    public decimal[]? AnnualInvestmentRateOfReturnRange { get; set; }
+
+
+    private RunParameter[]? runparameters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        runparameters = Enumerable.Range(1, 1).Select(index => new RunParameter
+        {
+                StartingYear = 2023,
+                YearOfBirth = 1958,
+                RetirementAge = 70,
+                StartingBalance = 550000,
+                AnnualSavingsContribution = 1000,
+                DesiredMonthlyIncome = 4500,
+                SocialSecurityMonthlyIncome = 3986,
+                AnnualInflationRateRange = new decimal[] { 0.0m, 0.08m },
+                AnnualInvestmentRateOfReturnRange = new decimal[] { 0.0m, 0.03m }
+        }).ToArray();
+    }
+
+    private class RunParameter
+    {
+        public int StartingYear { get; set; }
+        public int YearOfBirth { get; set; }
+        public int RetirementAge { get; set; }
+        public decimal StartingBalance { get; set; }
+        public decimal AnnualSavingsContribution { get; set; }
+        public decimal DesiredMonthlyIncome { get; set; }
+        public decimal SocialSecurityMonthlyIncome { get; set; }
+        public decimal[]? AnnualInflationRateRange { get; set; }
+        public decimal[]? AnnualInvestmentRateOfReturnRange { get; set; }
+    }
+}

@@ -1,0 +1,82 @@
+﻿@page "/accountrundetails"
+@rendermode InteractiveServer
+@using FinancialPlanner.Components.Models;
+@attribute [StreamRendering(true)]
+@namespace FinancialPlanner.Components.AppComponents
+
+<small>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Current Year</th>
+
+                <th>Current Age</th>
+
+                <th>Starting Balance</th>
+
+                <th>Ending Balance</th>
+
+                <th>Annual Savings Contribution</th>
+
+                <th>Desired Monthly Income</th>
+
+                <th>Social Security Monthly Income</th>
+
+                <th>Annual Savings Change</th>
+
+                <th>Annual Investment Gain/Loss</th>
+
+                <th>Annual Inflation Rate</th>
+
+                <th>Annual Investment Rate Of Return</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var balance in AccountBalanceMetrixList)
+            {
+                age = balance.CurrentYear - YearOfBirth;
+
+                <tr data-widget="expandable-table" aria-expanded="false">
+                    <td>@balance.CurrentYear</td>
+
+                    <td>@age</td>
+
+                    <td>@balance.StartingBalance.ToString("C")</td>
+
+                    <td>@balance.EndingBalance.ToString("C")</td>
+
+                    <td>@balance.AnnualSavingsContribution.ToString("C")</td>
+
+                    <td>@balance.DesiredMonthlyIncome.ToString("C")</td>
+
+                    <td>@balance.SocialSecurityMonthlyIncome.ToString("C")</td>
+
+                    <td>@balance.AnnualSavingsChange.ToString("C")</td>
+
+                    <td>@balance.AnnualInvestmentChange.ToString("C")</td>
+
+                    <td>@balance.AnnualInflationRate.ToString("P01")</td>
+
+                    <td>@balance.AnnualInvestmentRateOfReturn.ToString("P02")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</small>
+
+
+@code {
+    int age = 0;
+
+    [Parameter]
+    public IEnumerable<AccountBalanceMetrix>? AccountBalanceMetrixList { get; set; }
+
+    [Parameter]
+    public int YearOfBirth { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+}

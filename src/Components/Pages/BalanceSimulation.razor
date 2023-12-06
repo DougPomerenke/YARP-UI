@@ -1,0 +1,483 @@
+﻿@page "/balancesimulation"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using System.Net.Http.Headers
+@using BlazorBootstrap; @* // Add this line for Blazor Bootstrap 1.10.3 *@
+@using StatisticalTools;
+@using FinancialPlanner;
+@using FinancialPlanner.Components;
+@using FinancialPlanner.Components.Models;
+@using FinancialPlanner.Components.AppComponents;
+
+@inject IHttpClientFactory ClientFactory
+
+<h3>Savings Scenario</h3>
+
+
+@if(_inputParameters is null)
+{
+    <p>Loading Scenario Parameters.</p>
+}
+else if (this.histogramBucket is null)
+{
+    <p>Loading Statistics.</p>
+}
+else if (this.accountHolders is null)
+{
+    <p>Loading Account Holders.</p>
+}
+else
+{
+    <table style="width: 100%;">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width: 10%; vertical-align:top"><AccountHolderSelect AccountHolderList=this.accountHolders OnAccountHolderSelect="LoadAccountHolderSettings" /></td>
+                <td></td>
+                <td style="width: 20%; vertical-align:top"><RunStatistics histogramBucket=this.histogramBucket /></td>
+                <td></td>
+                <td style="width: 70%; vertical-align:top"><ParameterDetails ScenarioParametersList=_inputParameters /></td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+<table style="width: 100%;">
+    <tbody>
+@*      These 4 inputs are bound to variables so that they will be loaded with the corresponding values from the selected account holder,
+        but with these inputs those values can be over ridden and used for the api call. *@
+        <tr>
+            <td style="width: 25%;">
+                <p>Monthly Savings Contribution Before Retirement :</p>
+                <input type="range" min="0" max="2000" step="50" value="@MonthlySavingsContribution"
+                       @oninput="@((args) => MonthlySavingsContribution = Convert.ToInt32( args.Value))" />
+                <p>@MonthlySavingsContribution</p>
+            </td>
+
+            <td>
+            <td style="width: 25%;">
+                <p>Retirement Age :</p>
+                <div>
+                    <select class="select-element" @bind="RetirementAge">
+                            @foreach (var item in retirementAgeDropDownList)
+                            {
+                            <option value="@item.ToString()">@item.ToString()</option>
+                            }
+                    </select>
+                </div>
+            </td>
+
+            </td>
+            <td style="width: 25%;">
+                <p>Expected Monthly Retirement Income :</p>
+                <input type="range" min="3000" max="6000" step="100" value="@MonthlyRetirementIncome"
+                       @oninput="@((args) => MonthlyRetirementIncome = Convert.ToInt32( args.Value))" />
+                <p>@MonthlyRetirementIncome</p>
+            </td>
+
+            <td style="width: 25%;">
+                <p>Social Security Payout Age :</p>
+                <div>
+                    <select class="select-element" @bind="SelectedSocialSecurityPayoutAge">
+                        @foreach (var item in dropDownList.socialSecurityPayoutYears)
+                        {
+                            <option value="@item.Age">@item.DisplayValue</option>
+                        }
+                    </select>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="(() => Reset())">Reset</button>
+<button class="btn btn-primary" @onclick="(() => RunParameterScenario(1))">Run 1 Scenario Set</button>
+<button class="btn btn-primary" @onclick="(() => RunParameterScenario(10))">Run 10 Scenario Sets</button>
+<button class="btn btn-primary" @onclick="(() => RunParameterScenario(100))">Run 100 Scenario Sets</button>
+
+<h4>Scroll up to see scenario parameters</h4>
+
+@if (getBalancesError || balances is null)
+{
+    <p>Unable to get account balances. Please try again later.</p>
+}
+else
+{
+    <AccountRunDetails AccountBalanceMetrixList="balances" YearOfBirth="yearOfBirth" />
+}
+
+@code {
+
+    protected List<ScenarioParameters> _inputParameters;
+    protected HistogramBucket? histogramBucket;
+    private IEnumerable<AccountBalanceMetrix>? balances = Array.Empty<AccountBalanceMetrix>();
+    private IEnumerable<AccountHolder>? accountHolders = Array.Empty<AccountHolder>();
+    private List<SocialSecurityPayout> ssPayoutSchedual;
+    private SocialSecurityPayoutYearDropdownList ssPayOutDropdownList;
+    private AccountHolder selectedAccountHolder;
+    private bool getBalancesError;
+    private bool getaccountHoldersError;
+    private bool shouldRender;
+    private int yearCount;
+    private int inTheBlackCount;
+    private string selectedScenario;
+    private int scenarioRunCount;
+    private int zeroAccountBalanceYear;
+    private int zeroAccountBalanceAge;
+
+
+    private int age;
+
+    private int yearOfBirth;
+    SocialSecurityPayout socialSecurityPayout;
+
+    // Parameters that can be changed in the UI
+    protected decimal monthlySavingsContribution;
+    protected decimal monthlyRetirementIncome;
+    protected int selectedSocialSecurityPayoutAge;
+    protected int selectedSocialSecurityPayout;
+    protected int retirementAge;
+
+    //  Properties for 2 way bound components
+    public decimal MonthlySavingsContribution
+    { 
+        get { return this.monthlySavingsContribution; }
+        set
+        {
+            this.monthlySavingsContribution = value;
+            InputParametersChange();
+        }
+    }
+    public decimal MonthlyRetirementIncome
+    {
+        get { return this.monthlyRetirementIncome; }
+        set
+        {
+            this.monthlyRetirementIncome = value;
+            InputParametersChange();
+        }
+    }
+    public int SelectedSocialSecurityPayoutAge
+    {
+        get { return this.selectedSocialSecurityPayoutAge; }
+        set
+        {
+            this.selectedSocialSecurityPayoutAge = value;
+            InputParametersChange();
+        }
+    }
+
+    public int RetirementAge
+    {
+        get { return this.retirementAge; }
+        set
+        {
+            this.retirementAge = value;
+            InputParametersChange();
+        }
+    }
+
+    public AccountHolder SelectedAccountHolder
+    {
+        get { return this.selectedAccountHolder; }
+        set
+        {
+            this.selectedAccountHolder = value;
+            InputParametersChange();
+        }
+    }
+
+    SocialSecurityPayoutYearDropdownList dropDownList = new()
+        {
+            socialSecurityPayoutYears = new List<SocialSecurityPayoutYear>()
+            {
+                new SocialSecurityPayoutYear { Age = 65, DisplayValue = "65 years old" },
+                new SocialSecurityPayoutYear {  Age = 66, DisplayValue = "66 years old" },
+                new SocialSecurityPayoutYear {  Age = 67, DisplayValue = "66 years 8 months old" },
+                new SocialSecurityPayoutYear {  Age = 68, DisplayValue = "68 years old" },
+                new SocialSecurityPayoutYear {  Age = 69, DisplayValue = "69 years old" },
+                new SocialSecurityPayoutYear {  Age = 70, DisplayValue = "70 years old" }
+            }
+        };
+
+    List<int> retirementAgeDropDownList = new()
+    {
+        65,66,67,68,69,70
+    };
+
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override void OnInitialized()
+    {
+        // Need to get parameters for run, either set hard coded values or load from a file or db.
+        // Need to get any changes values from UI
+        // Load these parameters and serialize for API.
+
+        zeroAccountBalanceYear = 0;
+        zeroAccountBalanceAge = 0;
+
+        this.histogramBucket = new HistogramBucket(5);
+        scenarioRunCount = 0;
+
+        LoadAllAccountHolders();
+
+        LoadAccountHolderSettings("");
+        shouldRender = true;    //  This is needed so that the loaded parameters are displayed.
+    }
+
+    void InputParametersChange()
+    {
+        _inputParameters = GetApiParameters();
+        //shouldRender = true;
+    }
+
+    protected void Reset()
+    {
+        OnInitialized();
+
+        // Do this now for ParameterDetails component
+        _inputParameters = GetApiParameters();
+
+        LoadAllAccountHolders();
+
+        //shouldRender = true;
+    }
+
+    protected async Task RunParameterScenario(int iterations)
+    {
+        string pathSetting = _config.GetSection("ApiUrls:BalanceCalculatorApi").Value;
+
+        Uri uri = new Uri(pathSetting);
+
+        for (int i = 0; i < iterations; i++)
+        {
+
+            _inputParameters = GetApiParameters();
+
+            var inputs = JsonSerializer.Serialize(_inputParameters);
+
+            var client = ClientFactory.CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "inputParameters");
+            request.RequestUri = uri;
+            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            request.Content = new StringContent(inputs, System.Text.Encoding.UTF8);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            try
+            {
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    using var responseStream = await response.Content.ReadAsStreamAsync();
+                    balances = await JsonSerializer.DeserializeAsync<IEnumerable<AccountBalanceMetrix>>(responseStream);
+
+                    scenarioRunCount++;  
+
+                    //  TODO    Push this business logic to a web API.
+                    //  Send all balances to an API that finds the age when the balance goes to 0
+                    //  Save those to a List, then send this list to another API that returns the histogram values.
+                    foreach (var balance in balances)
+                    {
+                        age = balance.CurrentYear - yearOfBirth;
+                        if(balance.EndingBalance<0)
+                        {
+                            zeroAccountBalanceYear = balance.CurrentYear;
+                            zeroAccountBalanceAge = balance.CurrentYear - yearOfBirth;
+                            this.histogramBucket.AddElement(zeroAccountBalanceAge);
+                        }
+                    }
+                }
+                else
+                {
+                    getBalancesError = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                getBalancesError = true;
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        //shouldRender = true;
+    }
+
+    protected async Task LoadAllAccountHolders()
+    {
+
+        try
+        {
+            string pathSetting = _config.GetSection("ApiUrls:AllAccountHolders").Value;
+
+            Uri uri = new Uri(pathSetting);
+
+            var request = new HttpRequestMessage(HttpMethod.Get,uri);
+            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var client = ClientFactory.CreateClient();
+
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                this.accountHolders = await JsonSerializer.DeserializeAsync<IEnumerable<AccountHolder>>(responseStream);
+
+                foreach (AccountHolder accountHolder in this.accountHolders)
+                {
+                    string accountHolderId = accountHolder.id;
+                    string accountHolderName = accountHolder.LastName + " " + accountHolder.FirstName;
+                }
+            }
+            else
+            {
+                getaccountHoldersError = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            getaccountHoldersError = true;
+            Console.WriteLine(ex.Message);
+        }
+
+        //shouldRender = true;
+    }
+
+    /// <summary>
+    /// 
+    /// 
+    /// </summary>
+    /// <param name="accountHolderId"> ID of account holder selected in the Account Holder dropdown</param>
+    private void LoadAccountHolderSettings(string accountHolderId)
+    {
+        //  Callback for the AccountHolderSelect dropdown.
+
+        if (this.accountHolders != null && accountHolderId.Length>0)
+        {
+            this.selectedAccountHolder = this.accountHolders.Where(c => c.id == accountHolderId).FirstOrDefault();
+
+            this.selectedScenario = "Default";  //  TODO - Add collection of scenarios to database.
+
+            if (this.selectedAccountHolder != null)
+            {
+                DateTime dob = DateTime.Parse(this.selectedAccountHolder.DateOfBirth);
+                this.yearOfBirth = dob.Year;
+
+                //  These 4 are adjustable in the UI
+                //  Set the values of the bounded UI elements
+
+                MonthlySavingsContribution = this.selectedAccountHolder.Scenario.PreRetirementMonthlySavingsContribution;
+                MonthlyRetirementIncome = this.selectedAccountHolder.Scenario.ExpectedMonthlyRetirementIncome;
+                SelectedSocialSecurityPayoutAge = this.selectedAccountHolder.Scenario.SocialSecurityPayoutAge;
+                RetirementAge = this.selectedAccountHolder.Scenario.RetirementAge;
+
+            }
+        }
+    }
+
+
+
+
+    /// <summary>
+    /// Collect all the parameters need by the BalanceCalculatorApi
+    /// </summary>
+    /// <returns></returns>
+    protected List<ScenarioParameters> GetApiParameters()
+    {
+        //
+
+        //  parameters.AnnualInvestmentRateOfReturnRange = new decimal[] { 0m, 0.03m };         //  Safe -  3% gain, no loss
+        //  parameters.AnnualInvestmentRateOfReturnRange = new decimal[] { -0.025m, 0.05m };    //  Moderate -  2.5% loss, 5% gain
+        //  parameters.AnnualInvestmentRateOfReturnRange = new decimal[] { -0.1m, 0.2m };       //  Aggressive - 10% loss, 20% gain
+
+        List<ScenarioParameters> parameterBag = new List<ScenarioParameters>();
+
+        if (this.selectedAccountHolder != null && SelectedSocialSecurityPayoutAge!=0)
+        {
+            DateTime dob = DateTime.Parse(this.selectedAccountHolder.DateOfBirth);
+            this.yearOfBirth = dob.Year;
+
+            //  These 4 are adjustable in the UI. The UI is loaded with values from the selected AccountHolder, but may be over written by the user.
+            // this.monthlySavingsContribution = MonthlySavingsContribution;
+            // this.monthlyRetirementIncome = MonthlyRetirementIncome;
+            // this.selectedSocialSecurityPayoutAge = SelectedSocialSecurityPayoutAge;
+            // this.retirementAge = RetirementAge;
+            // this.selectedSocialSecurityPayoutAge = SelectedSocialSecurityPayoutAge;
+
+            List<SocialSecurityPayout> accountHoldersSocialSecurityPayouts = this.selectedAccountHolder.SocialSecurityPayouts;
+
+            decimal selectedSocialSecurityMonthlyPayout = accountHoldersSocialSecurityPayouts.Where(c => c.StartingAge == SelectedSocialSecurityPayoutAge).FirstOrDefault().MonthlyPayout;
+
+            //   The first three financial events happen only once
+            ScenarioParameters scenarioParameters = new ScenarioParameters(LifeEventType.StartingYear.ToString());
+            scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.StartingYear.ToString()).FirstOrDefault().Year;
+            scenarioParameters.DecimalValue = this.selectedAccountHolder.AccountStaringBalance;
+            parameterBag.Add(scenarioParameters);
+
+            scenarioParameters = new ScenarioParameters(LifeEventType.RetirementYear.ToString());
+            scenarioParameters.LifeEventStartingYear = this.yearOfBirth + RetirementAge;
+            scenarioParameters.DecimalValue= MonthlyRetirementIncome;
+            parameterBag.Add(scenarioParameters);
+
+            scenarioParameters = new ScenarioParameters(LifeEventType.SocialSecurityPayoutYear.ToString());
+            scenarioParameters.LifeEventStartingYear = this.yearOfBirth + SelectedSocialSecurityPayoutAge;
+            scenarioParameters.DecimalValue = selectedSocialSecurityMonthlyPayout;
+            parameterBag.Add(scenarioParameters);
+
+
+            //  The remaining financial events can happen more than once, so loop through the collection for each type.
+            var inflationRateChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.InflationRateChange.ToString());
+
+            foreach (FinancialEvent fe in inflationRateChangeEvent)
+            {
+                scenarioParameters = new ScenarioParameters(LifeEventType.InflationRateChange.ToString());
+                scenarioParameters.LifeEventStartingYear = fe.Year;
+                scenarioParameters.DecimalArray = fe.Payload;
+                parameterBag.Add(scenarioParameters);
+            }
+
+            var investmentYieldChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.InvestmentYieldChange.ToString());
+
+            foreach (FinancialEvent fe in investmentYieldChangeEvent)
+            {
+                scenarioParameters = new ScenarioParameters(LifeEventType.InvestmentYieldChange.ToString());
+                scenarioParameters.LifeEventStartingYear = fe.Year;
+                scenarioParameters.DecimalArray = fe.Payload;
+                parameterBag.Add(scenarioParameters);
+            }
+
+            var loanPayOffYearChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.LoanPayOffYear.ToString());
+
+            foreach (FinancialEvent fe in loanPayOffYearChangeEvent)
+            {
+                scenarioParameters = new ScenarioParameters(LifeEventType.LoanPayOffYear.ToString());
+                scenarioParameters.LifeEventStartingYear = fe.Year;
+                scenarioParameters.DecimalValue = fe.Payload[0];
+                parameterBag.Add(scenarioParameters);
+            }
+        }
+
+        return parameterBag;
+    }
+
+    public enum LifeEventType
+    {
+        StartingYear,
+        RetirementYear,
+        SavingChange,
+        InvestmentYieldChange,
+        InflationRateChange,
+        SocialSecurityPayoutYear,
+        LoanPayOffYear
+    }
+
+}
