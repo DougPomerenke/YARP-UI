@@ -2,7 +2,6 @@ using FinancialPlanner;
 using FinancialPlanner.Components;
 using FinancialPlanner.Services;
 using Microsoft.Extensions.DependencyInjection;
-using static FinancialPlanner.Components.Pages.Manage_Accounts;
 
 
 var builder = WebApplication.CreateBuilder(args);

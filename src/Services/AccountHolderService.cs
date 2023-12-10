@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static FinancialPlanner.Components.Pages.Manage_Accounts;
+using static FinancialPlanner.Components.Pages.ManageAccountHolders;
 using FinancialPlanner.Components.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,7 +31,7 @@ namespace FinancialPlanner.Services
             catch (Exception ex)
             {
                 string message = ex.Message;
-                return null ;
+                return null;
             }
 
         }

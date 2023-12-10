@@ -1,4 +1,5 @@
-﻿@page "/manageaccounts"
+﻿@page "/manageaccountholders"
+@using Microsoft.AspNetCore.Components.QuickGrid;
 @rendermode InteractiveServer
 @using System.Text.Json
 @using System.Text.Json.Serialization
@@ -15,7 +16,6 @@
 }
 else
 {
-    <p role="status">Account Holder Name: @this.accountHolderName</p>
 
     <small><table class="table" width="25%">
         <thead>
@@ -28,6 +28,7 @@ else
                     <th width="1">Expected Monthly Retirement Income</th>
                     <th width="1">Pre Retirement Monthly Savings Contribution</th>
                     <th width="1">Social Security Payout Age</th>
+                    <th width="1">Financial Events</th>
             </tr>
         </thead>
         <tbody>
@@ -42,16 +43,31 @@ else
                     <td>@accountHolder.Scenario.ExpectedMonthlyRetirementIncome</td>
                     <td>@accountHolder.Scenario.PreRetirementMonthlySavingsContribution</td>
                     <td>@accountHolder.Scenario.SocialSecurityPayoutAge</td>
+                    <td>@accountHolder.FinancialEvents.Count</td>
                 </tr>
             }
         </tbody>
     </table></small>
 }
 
+@if (getAccountHoldersError || accountHolderList is null)
+{
+    <p>Unable to get account holders. Please try again later.</p>
+}
+else
+{
+    <QuickGrid Items="@accountHolderList">
+        <PropertyColumn Property="@(p => p.FirstName)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.LastName)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.DateOfBirth)" Sortable="true" />
+    </QuickGrid>
+}
+
 @code {
     private bool shouldRender;
 
     private IEnumerable<AccountHolder>? accountHolders = Array.Empty<AccountHolder>();
+    private IQueryable<AccountHolder>? accountHolderList;
 
     private bool getAccountHoldersError;
     private string accountHolderName;
@@ -82,6 +98,8 @@ else
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 this.accountHolders = await JsonSerializer.DeserializeAsync<IEnumerable<AccountHolder>>(responseStream);
+
+                //this.accountHolderList = await JsonSerializer.DeserializeAsync<IQueryable<AccountHolder>>(responseStream);
 
                 int count = this.accountHolders.Count();
             }
