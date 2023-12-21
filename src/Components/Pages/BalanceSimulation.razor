@@ -92,6 +92,7 @@ else
     </tbody>
 </table>
 
+
 <button class="btn btn-primary" @onclick="(() => Reset())">Reset</button>
 <button class="btn btn-primary" @onclick="(() => RunParameterScenario(1))">Run 1 Scenario Set</button>
 <button class="btn btn-primary" @onclick="(() => RunParameterScenario(10))">Run 10 Scenario Sets</button>
@@ -314,7 +315,7 @@ else
 
         try
         {
-            string pathSetting = _config.GetSection("ApiUrls:AllAccountHolders").Value;
+            string pathSetting = _config.GetSection("ApiUrls:AccountHolders").Value;
 
             Uri uri = new Uri(pathSetting);
 
@@ -331,12 +332,6 @@ else
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 this.accountHolders = await JsonSerializer.DeserializeAsync<IEnumerable<AccountHolder>>(responseStream);
-
-                foreach (AccountHolder accountHolder in this.accountHolders)
-                {
-                    string accountHolderId = accountHolder.id;
-                    string accountHolderName = accountHolder.LastName + " " + accountHolder.FirstName;
-                }
             }
             else
             {
@@ -375,10 +370,10 @@ else
                 //  These 4 are adjustable in the UI
                 //  Set the values of the bounded UI elements
 
-                MonthlySavingsContribution = this.selectedAccountHolder.Scenario.PreRetirementMonthlySavingsContribution;
-                MonthlyRetirementIncome = this.selectedAccountHolder.Scenario.ExpectedMonthlyRetirementIncome;
-                SelectedSocialSecurityPayoutAge = this.selectedAccountHolder.Scenario.SocialSecurityPayoutAge;
-                RetirementAge = this.selectedAccountHolder.Scenario.RetirementAge;
+                MonthlySavingsContribution = this.selectedAccountHolder.ScenarioSets[0].PreRetirementMonthlySavingsContribution;
+                MonthlyRetirementIncome = this.selectedAccountHolder.ScenarioSets[0].ExpectedMonthlyRetirementIncome;
+                SelectedSocialSecurityPayoutAge = this.selectedAccountHolder.ScenarioSets[0].SocialSecurityPayoutAge;
+                RetirementAge = this.selectedAccountHolder.ScenarioSets[0].RetirementAge;
 
             }
         }
@@ -420,7 +415,7 @@ else
             //   The first three financial events happen only once
             ScenarioParameters scenarioParameters = new ScenarioParameters(LifeEventType.StartingYear.ToString());
             scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.StartingYear.ToString()).FirstOrDefault().Year;
-            scenarioParameters.DecimalValue = this.selectedAccountHolder.AccountStaringBalance;
+            scenarioParameters.DecimalValue = this.selectedAccountHolder.AccountStartingBalance;
             parameterBag.Add(scenarioParameters);
 
             scenarioParameters = new ScenarioParameters(LifeEventType.RetirementYear.ToString());

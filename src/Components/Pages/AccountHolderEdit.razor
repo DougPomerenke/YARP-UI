@@ -1,0 +1,120 @@
+﻿@page "/accountholderedit"
+@page "/accountholderedit/{id:Guid}"
+@using Microsoft.AspNetCore.Components.QuickGrid;
+@rendermode InteractiveServer
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using System.Net.Http.Headers
+@using FinancialPlanner.Components.Models;
+@using FinancialPlanner.Services;
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory ClientFactory
+@inject IAccountHolderService AccountHolderService
+@attribute [StreamRendering(true)]
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Account Holder</PageTitle>
+    <h3>Create a new Account Holder</h3>
+}
+else
+{
+    <PageTitle>Edit Account Holder</PageTitle>
+    <h3>Edit Account Holder</h3>
+}
+
+
+<EditForm Model="@AccountHolderModel" OnSubmit="HandleSubmit">
+
+    <div>
+        <label for="firstname">First Name</label>
+        <InputText id="firstname" @bind-Value="AccountHolderModel.FirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="lastname">Last Name</label>
+        <InputText id="lastname" @bind-Value="AccountHolderModel.LastName" class="form-control"></InputText>
+    </div>
+
+    <div>
+        <label for="dateofbirth">Date Of Birth</label>
+        <InputText id="dateofbirth" @bind-Value="AccountHolderModel.DateOfBirth" class="form-control"></InputText>
+    </div>
+
+    <div>
+        <label for="accountstartingbalance">Account Starting Balance</label>
+        <InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel.AccountStartingBalance" class="form-control"></InputNumber>
+    </div>
+
+@*      <div>
+        <label for="name">Scenario Name</label>
+        <InputText id="name" @bind-Value="AccountHolderModel.ScenarioSets[0].Name" class="form-control"></InputText>
+    </div> *@
+
+@*     <div>
+        <label for="retirementage">Retirement Age</label>
+        <InputNumber id="retirementage" @bind-Value="AccountHolderModel.ScenarioSets[0].RetirementAge" class="form-control"></InputNumber>
+    </div> *@
+
+@*     <div>
+        <label for="socialsecuritypayoutage">Social Security Payout Age</label>
+    <InputNumber id="socialsecuritypayoutage" @bind-Value="AccountHolderModel.ScenarioSets[0].SocialSecurityPayoutAge" class="form-control"></InputNumber>
+    </div> *@
+
+@*     <div>
+        <label for="expectedmonthlyretirementincome">Expected Monthly Retirement Income</label>
+    <InputNumber id="expectedmonthlyretirementincome" @bind-Value="AccountHolderModel.ScenarioSets[0].ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber>
+    </div> *@
+
+@*     <div>
+        <label for="preretirementmonthlysavingscontribution">Pre Retirement Monthly Savings Contribution</label>
+    <InputNumber id="preretirementmonthlysavingscontribution" @bind-Value="AccountHolderModel.ScenarioSets[0].PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber>
+    </div> *@
+
+
+    <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Update Account Holder</button>
+    <button type="button" class="btn btn-danger" @onclick="DeleteAccountHolder">Delete Account Holder</button>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    public AccountHolder? AccountHolderModel { get; set; }
+
+    protected override void OnInitialized() => AccountHolderModel ??= new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+            //accountHolder.FinancialEvents = AccountHolderService.
+            //hero.ComicId = hero.Comic.Id;
+        }
+        else
+        {
+            AccountHolderModel = await AccountHolderService.GetAccountHolder(Id);
+
+            string fullName = AccountHolderModel.FullName;
+            string name = AccountHolderModel.ScenarioSets[0].Name;
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id == null)
+        {
+            await AccountHolderService.CreateAccountHolder(AccountHolderModel);
+        }
+        else
+        {
+            await AccountHolderService.UpdateAccountHolder(AccountHolderModel);
+        }
+    }
+
+    async Task DeleteAccountHolder()
+    {
+        await AccountHolderService.DeleteAccountHolder(AccountHolderModel.id);
+    }
+
+}

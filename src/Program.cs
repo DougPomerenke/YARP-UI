@@ -10,12 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddBlazorBootstrap(); // Add this line for Blazor Bootstrap 1.10.3
+builder.Services.AddBlazorBootstrap(); // Add this line for Blazor Bootstrap 1.10.4
 builder.Services.AddRazorPages();   // Added for web api
 builder.Services.AddServerSideBlazor(); // Added for web api
 
 // Added for calling web api
+
 builder.Services.AddHttpClient<IAccountHolderService, AccountHolderService>();
+
 
 
 var app = builder.Build();

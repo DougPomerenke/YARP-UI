@@ -15,18 +15,23 @@ namespace FinancialPlanner.Components.Models
         [JsonPropertyName("dateOfBirth")]
         public string DateOfBirth { get; set; }
 
-        [JsonPropertyName("accountStaringBalance")]
-        public decimal AccountStaringBalance { get; set; }
+        [JsonPropertyName("accountStartingBalance")]
+        public decimal AccountStartingBalance { get; set; }
 
         // Schedule from the Social Security Administration that one receives shortly before the age of 65
         [JsonPropertyName("socialSecurityPayouts")]
         public List<SocialSecurityPayout> SocialSecurityPayouts { get; set; }
 
-        [JsonPropertyName("scenario")]
-        public Scenario Scenario { get; set; }
+        [JsonPropertyName("scenarioSets")]
+        public List<Scenario> ScenarioSets { get; set; }
 
         [JsonPropertyName("financialEvents")]
         public List<FinancialEvent> FinancialEvents { get; set; }
+
+        public string FullName
+        {
+            get { return this.FirstName + " " + this.LastName; }
+        }
     }
 
     public class Scenario
