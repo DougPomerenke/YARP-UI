@@ -15,72 +15,100 @@
 @if (Id == null)
 {
     <PageTitle>Create a new Account Holder</PageTitle>
-    <h3>Create a new Account Holder</h3>
+    <h1>Create a new Account Holder</h1>
 }
 else
 {
     <PageTitle>Edit Account Holder</PageTitle>
-    <h3>Edit Account Holder</h3>
+    <h1>Edit Account Holder</h1>
 }
 
+@if (_render)
+{
+    <h2>Account Holder</h2>
 
-<EditForm Model="@AccountHolderModel" OnSubmit="HandleSubmit">
+    <EditForm Model="@AccountHolderModel" OnSubmit="HandleSubmit">
 
-    <div>
-        <label for="firstname">First Name</label>
-        <InputText id="firstname" @bind-Value="AccountHolderModel.FirstName" class="form-control"></InputText>
-    </div>
-    <div>
-        <label for="lastname">Last Name</label>
-        <InputText id="lastname" @bind-Value="AccountHolderModel.LastName" class="form-control"></InputText>
-    </div>
+        <div>
+            <label for="firstname">First Name</label>
+            <InputText id="firstname" @bind-Value="AccountHolderModel.FirstName" class="form-control"></InputText>
+        </div>
+        <div>
+            <label for="lastname">Last Name</label>
+            <InputText id="lastname" @bind-Value="AccountHolderModel.LastName" class="form-control"></InputText>
+        </div>
 
-    <div>
-        <label for="dateofbirth">Date Of Birth</label>
-        <InputText id="dateofbirth" @bind-Value="AccountHolderModel.DateOfBirth" class="form-control"></InputText>
-    </div>
+        <div>
+            <label for="dateofbirth">Date Of Birth</label>
+            <InputText id="dateofbirth" @bind-Value="AccountHolderModel.DateOfBirth" class="form-control"></InputText>
+        </div>
 
-    <div>
-        <label for="accountstartingbalance">Account Starting Balance</label>
-        <InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel.AccountStartingBalance" class="form-control"></InputNumber>
-    </div>
-
-@*      <div>
+        <div>
+            <label for="accountstartingbalance">Account Starting Balance</label>
+            <InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel.AccountStartingBalance" class="form-control"></InputNumber>
+        </div>
+        <div><p></p></div>
+        <h2>Scenarios</h2>
+             <div>
         <label for="name">Scenario Name</label>
         <InputText id="name" @bind-Value="AccountHolderModel.ScenarioSets[0].Name" class="form-control"></InputText>
-    </div> *@
-
-@*     <div>
+    </div>
+        
+    <div>
         <label for="retirementage">Retirement Age</label>
         <InputNumber id="retirementage" @bind-Value="AccountHolderModel.ScenarioSets[0].RetirementAge" class="form-control"></InputNumber>
-    </div> *@
+    </div>
 
-@*     <div>
+            <div>
         <label for="socialsecuritypayoutage">Social Security Payout Age</label>
     <InputNumber id="socialsecuritypayoutage" @bind-Value="AccountHolderModel.ScenarioSets[0].SocialSecurityPayoutAge" class="form-control"></InputNumber>
-    </div> *@
+    </div>
 
-@*     <div>
+            <div>
         <label for="expectedmonthlyretirementincome">Expected Monthly Retirement Income</label>
     <InputNumber id="expectedmonthlyretirementincome" @bind-Value="AccountHolderModel.ScenarioSets[0].ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber>
-    </div> *@
+    </div>
 
-@*     <div>
+            <div>
         <label for="preretirementmonthlysavingscontribution">Pre Retirement Monthly Savings Contribution</label>
     <InputNumber id="preretirementmonthlysavingscontribution" @bind-Value="AccountHolderModel.ScenarioSets[0].PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber>
-    </div> *@
+    </div>
+        <div><p></p></div>
+        <h2>Financial Events</h2>
+
+    <div>
+        @foreach (var financialEvent in AccountHolderModel.FinancialEvents)
+        {
+            <tr>
+                <div>
+                <td><InputText id="lifeeventdisplaymessage" @bind-Value="financialEvent.Type" class="form-control"></InputText></td>
+                <td><InputNumber id="lifeeventstartingyear" @bind-Value="financialEvent.Year" class="form-control"></InputNumber></td>
+                <td><InputNumber id="payloaditem0" @bind-Value="financialEvent.Payload[0]" class="form-control"></InputNumber></td>
+                @if(financialEvent.Payload.Length>1)
+                        {
+                    <td><InputNumber id="payloaditem1" @bind-Value="financialEvent.Payload[1]" class="form-control"></InputNumber></td>
+                        }
+                </div>
+            </tr>
+        }
+        </div>
 
 
-    <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Update Account Holder</button>
-    <button type="button" class="btn btn-danger" @onclick="DeleteAccountHolder">Delete Account Holder</button>
-</EditForm>
 
+
+        <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Update Account Holder</button>
+        <button type="button" class="btn btn-danger" @onclick="DeleteAccountHolder">Delete Account Holder</button>
+    </EditForm>
+}
 
 @code {
     [Parameter]
     public string? Id { get; set; }
 
+    [SupplyParameterFromForm]
     public AccountHolder? AccountHolderModel { get; set; }
+
+    private bool _render;
 
     protected override void OnInitialized() => AccountHolderModel ??= new();
 
@@ -95,8 +123,23 @@ else
         {
             AccountHolderModel = await AccountHolderService.GetAccountHolder(Id);
 
-            string fullName = AccountHolderModel.FullName;
-            string name = AccountHolderModel.ScenarioSets[0].Name;
+            string scenarioSetName = AccountHolderModel.ScenarioSets[0].Name;
+            string scenarioPreRetirementMonthlySavingsContribution = AccountHolderModel.ScenarioSets[0].PreRetirementMonthlySavingsContribution.ToString();
+            string scenarioRetirementAge = AccountHolderModel.ScenarioSets[0].RetirementAge.ToString();
+            string scenarioSocialSecurityPayoutAge = AccountHolderModel.ScenarioSets[0].SocialSecurityPayoutAge.ToString();
+            string scenarioExpectedMonthlyRetirementIncome = AccountHolderModel.ScenarioSets[0].ExpectedMonthlyRetirementIncome.ToString();
+
+            int financialEventCount = AccountHolderModel.FinancialEvents.Count;
+
+            decimal eventStartYear = AccountHolderModel.FinancialEvents[0].Year;
+            string eventType = AccountHolderModel.FinancialEvents[0].Type;
+            decimal[] payload0 = AccountHolderModel.FinancialEvents[0].Payload;
+            decimal[] payload1 = AccountHolderModel.FinancialEvents[1].Payload;
+
+            if(AccountHolderModel.ScenarioSets!=null && AccountHolderModel.FinancialEvents!=null)
+            {
+                _render = true;
+            }
         }
     }
 
