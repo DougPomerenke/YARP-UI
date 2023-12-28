@@ -56,7 +56,6 @@ else
                 <p>@MonthlySavingsContribution</p>
             </td>
 
-            <td>
             <td style="width: 25%;">
                 <p>Retirement Age :</p>
                 <div>
@@ -69,7 +68,6 @@ else
                 </div>
             </td>
 
-            </td>
             <td style="width: 25%;">
                 <p>Expected Monthly Retirement Income :</p>
                 <input type="range" min="3000" max="6000" step="100" value="@MonthlyRetirementIncome"
@@ -93,7 +91,7 @@ else
 </table>
 
 
-<button class="btn btn-primary" @onclick="(() => Reset())">Reset</button>
+<button class="btn btn-primary" @onclick="(() => Reset())">Reload Account Holders</button>
 <button class="btn btn-primary" @onclick="(() => RunParameterScenario(1))">Run 1 Scenario Set</button>
 <button class="btn btn-primary" @onclick="(() => RunParameterScenario(10))">Run 10 Scenario Sets</button>
 <button class="btn btn-primary" @onclick="(() => RunParameterScenario(100))">Run 100 Scenario Sets</button>
@@ -370,10 +368,10 @@ else
                 //  These 4 are adjustable in the UI
                 //  Set the values of the bounded UI elements
 
-                MonthlySavingsContribution = this.selectedAccountHolder.ScenarioSets[0].PreRetirementMonthlySavingsContribution;
-                MonthlyRetirementIncome = this.selectedAccountHolder.ScenarioSets[0].ExpectedMonthlyRetirementIncome;
-                SelectedSocialSecurityPayoutAge = this.selectedAccountHolder.ScenarioSets[0].SocialSecurityPayoutAge;
-                RetirementAge = this.selectedAccountHolder.ScenarioSets[0].RetirementAge;
+                MonthlySavingsContribution = this.selectedAccountHolder.Scenarios[0].PreRetirementMonthlySavingsContribution;
+                MonthlyRetirementIncome = this.selectedAccountHolder.Scenarios[0].ExpectedMonthlyRetirementIncome;
+                SelectedSocialSecurityPayoutAge = this.selectedAccountHolder.Scenarios[0].SocialSecurityPayoutAge;
+                RetirementAge = this.selectedAccountHolder.Scenarios[0].RetirementAge;
 
             }
         }

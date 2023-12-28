@@ -51,27 +51,27 @@ else
         <h2>Scenarios</h2>
              <div>
         <label for="name">Scenario Name</label>
-        <InputText id="name" @bind-Value="AccountHolderModel.ScenarioSets[0].Name" class="form-control"></InputText>
+        <InputText id="name" @bind-Value="AccountHolderModel.Scenarios[0].Name" class="form-control"></InputText>
     </div>
         
     <div>
         <label for="retirementage">Retirement Age</label>
-        <InputNumber id="retirementage" @bind-Value="AccountHolderModel.ScenarioSets[0].RetirementAge" class="form-control"></InputNumber>
+        <InputNumber id="retirementage" @bind-Value="AccountHolderModel.Scenarios[0].RetirementAge" class="form-control"></InputNumber>
     </div>
 
             <div>
         <label for="socialsecuritypayoutage">Social Security Payout Age</label>
-    <InputNumber id="socialsecuritypayoutage" @bind-Value="AccountHolderModel.ScenarioSets[0].SocialSecurityPayoutAge" class="form-control"></InputNumber>
+    <InputNumber id="socialsecuritypayoutage" @bind-Value="AccountHolderModel.Scenarios[0].SocialSecurityPayoutAge" class="form-control"></InputNumber>
     </div>
 
             <div>
         <label for="expectedmonthlyretirementincome">Expected Monthly Retirement Income</label>
-    <InputNumber id="expectedmonthlyretirementincome" @bind-Value="AccountHolderModel.ScenarioSets[0].ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber>
+    <InputNumber id="expectedmonthlyretirementincome" @bind-Value="AccountHolderModel.Scenarios[0].ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber>
     </div>
 
             <div>
         <label for="preretirementmonthlysavingscontribution">Pre Retirement Monthly Savings Contribution</label>
-    <InputNumber id="preretirementmonthlysavingscontribution" @bind-Value="AccountHolderModel.ScenarioSets[0].PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber>
+    <InputNumber id="preretirementmonthlysavingscontribution" @bind-Value="AccountHolderModel.Scenarios[0].PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber>
     </div>
         <div><p></p></div>
         <h2>Financial Events</h2>
@@ -123,11 +123,11 @@ else
         {
             AccountHolderModel = await AccountHolderService.GetAccountHolder(Id);
 
-            string scenarioSetName = AccountHolderModel.ScenarioSets[0].Name;
-            string scenarioPreRetirementMonthlySavingsContribution = AccountHolderModel.ScenarioSets[0].PreRetirementMonthlySavingsContribution.ToString();
-            string scenarioRetirementAge = AccountHolderModel.ScenarioSets[0].RetirementAge.ToString();
-            string scenarioSocialSecurityPayoutAge = AccountHolderModel.ScenarioSets[0].SocialSecurityPayoutAge.ToString();
-            string scenarioExpectedMonthlyRetirementIncome = AccountHolderModel.ScenarioSets[0].ExpectedMonthlyRetirementIncome.ToString();
+            string scenarioSetName = AccountHolderModel.Scenarios[0].Name;
+            string scenarioPreRetirementMonthlySavingsContribution = AccountHolderModel.Scenarios[0].PreRetirementMonthlySavingsContribution.ToString();
+            string scenarioRetirementAge = AccountHolderModel.Scenarios[0].RetirementAge.ToString();
+            string scenarioSocialSecurityPayoutAge = AccountHolderModel.Scenarios[0].SocialSecurityPayoutAge.ToString();
+            string scenarioExpectedMonthlyRetirementIncome = AccountHolderModel.Scenarios[0].ExpectedMonthlyRetirementIncome.ToString();
 
             int financialEventCount = AccountHolderModel.FinancialEvents.Count;
 
@@ -136,7 +136,7 @@ else
             decimal[] payload0 = AccountHolderModel.FinancialEvents[0].Payload;
             decimal[] payload1 = AccountHolderModel.FinancialEvents[1].Payload;
 
-            if(AccountHolderModel.ScenarioSets!=null && AccountHolderModel.FinancialEvents!=null)
+            if(AccountHolderModel.Scenarios!=null && AccountHolderModel.FinancialEvents!=null)
             {
                 _render = true;
             }

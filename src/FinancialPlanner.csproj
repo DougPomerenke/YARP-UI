@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FinancialPlannerClient\**" />
     <Compile Remove="FinancialPlannerData\**" />
+    <Content Remove="FinancialPlannerClient\**" />
     <Content Remove="FinancialPlannerData\**" />
+    <EmbeddedResource Remove="FinancialPlannerClient\**" />
     <EmbeddedResource Remove="FinancialPlannerData\**" />
+    <None Remove="FinancialPlannerClient\**" />
     <None Remove="FinancialPlannerData\**" />
   </ItemGroup>
 

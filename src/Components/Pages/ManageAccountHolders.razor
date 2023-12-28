@@ -41,10 +41,10 @@ else
                     <td>@accountHolder.LastName</td>
                     <td>@accountHolder.DateOfBirth</td>
                     <td>@accountHolder.AccountStartingBalance</td>
-                    <td>@accountHolder.ScenarioSets[0].RetirementAge</td>
-                    <td>@accountHolder.ScenarioSets[0].ExpectedMonthlyRetirementIncome</td>
-                    <td>@accountHolder.ScenarioSets[0].PreRetirementMonthlySavingsContribution</td>
-                    <td>@accountHolder.ScenarioSets[0].SocialSecurityPayoutAge</td>
+                    <td>@accountHolder.Scenarios[0].RetirementAge</td>
+                    <td>@accountHolder.Scenarios[0].ExpectedMonthlyRetirementIncome</td>
+                    <td>@accountHolder.Scenarios[0].PreRetirementMonthlySavingsContribution</td>
+                    <td>@accountHolder.Scenarios[0].SocialSecurityPayoutAge</td>
                     <td>@accountHolder.FinancialEvents.Count</td>
                     <button class="btn btn-primary" @onclick="(() => ShowAccountHolder(accountHolder.id))"><i class="oi oi-pencil"></i></button>
                 </tr>

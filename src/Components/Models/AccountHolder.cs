@@ -22,8 +22,8 @@ namespace FinancialPlanner.Components.Models
         [JsonPropertyName("socialSecurityPayouts")]
         public List<SocialSecurityPayout> SocialSecurityPayouts { get; set; }
 
-        [JsonPropertyName("scenarioSets")]
-        public List<Scenario> ScenarioSets { get; set; }
+        [JsonPropertyName("scenarios")]
+        public List<Scenario> Scenarios { get; set; }
 
         [JsonPropertyName("financialEvents")]
         public List<FinancialEvent> FinancialEvents { get; set; }
