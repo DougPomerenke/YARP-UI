@@ -3,6 +3,8 @@
 ## Summary
 YARP is an application for running Monte Carlo simulations to help one make financial decisions regarding retirement. The application is developed on the Microsoft .NET stack. The UI is Blazor, the API is .NET Core, and currently, the Cosmso Db emulator is used for saving the account holders financial data.
 
+![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/4e661f4a-89b0-40d2-bf01-9b6a5ca3b06e)
+
 ### Architecture
 
 ### Usage
