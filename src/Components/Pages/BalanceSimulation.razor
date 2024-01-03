@@ -38,6 +38,8 @@ else
                 <td></td>
                 <td style="width: 20%; vertical-align:top"><RunStatistics histogramBucket=this.histogramBucket /></td>
                 <td></td>
+                <td style="width: 20%; vertical-align:top"><Histogram histogramBucket=this.histogramBucket /></td>
+                <td></td>
                 <td style="width: 70%; vertical-align:top"><ParameterDetails ScenarioParametersList=_inputParameters /></td>
             </tr>
         </tbody>
@@ -108,7 +110,8 @@ else
 }
 
 @code {
-
+    const int BUCKET_WIDTH = 1;
+    const int NUMBER_OF_BUCKETS = 30;
     protected List<ScenarioParameters> _inputParameters;
     protected HistogramBucket? histogramBucket;
     private IEnumerable<AccountBalanceMetrix>? balances = Array.Empty<AccountBalanceMetrix>();
@@ -218,7 +221,7 @@ else
         zeroAccountBalanceYear = 0;
         zeroAccountBalanceAge = 0;
 
-        this.histogramBucket = new HistogramBucket(5);
+        this.histogramBucket = new HistogramBucket(73, NUMBER_OF_BUCKETS, BUCKET_WIDTH); // 30 buckets, starting at 73-74
         scenarioRunCount = 0;
 
         LoadAllAccountHolders();
