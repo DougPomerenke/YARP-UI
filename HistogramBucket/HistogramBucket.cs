@@ -2,8 +2,6 @@
 {
     public class HistogramBucket
     {
-
-        const int BUCKET_WIDTH = 1;
         protected int bucketWidth;
         protected int numberOfBuckets;
         protected int lowestBucket;

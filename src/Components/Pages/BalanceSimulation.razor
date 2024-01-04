@@ -36,11 +36,11 @@ else
             <tr>
                 <td style="width: 10%; vertical-align:top"><AccountHolderSelect AccountHolderList=this.accountHolders OnAccountHolderSelect="LoadAccountHolderSettings" /></td>
                 <td></td>
-                <td style="width: 20%; vertical-align:top"><RunStatistics histogramBucket=this.histogramBucket /></td>
+                <td style="width: 15%; vertical-align:top"><RunStatistics histogramBucket=this.histogramBucket /></td>
                 <td></td>
-                <td style="width: 20%; vertical-align:top"><Histogram histogramBucket=this.histogramBucket /></td>
+                <td style="width: 40%; vertical-align:top"><Histogram histogramBucket=this.histogramBucket /></td>
                 <td></td>
-                <td style="width: 70%; vertical-align:top"><ParameterDetails ScenarioParametersList=_inputParameters /></td>
+                <td style="width: 35%; vertical-align:top"><ParameterDetails ScenarioParametersList=_inputParameters /></td>
             </tr>
         </tbody>
     </table>
@@ -112,6 +112,7 @@ else
 @code {
     const int BUCKET_WIDTH = 1;
     const int NUMBER_OF_BUCKETS = 30;
+    const int STARTING_AGE_BUCKET = 75;
     protected List<ScenarioParameters> _inputParameters;
     protected HistogramBucket? histogramBucket;
     private IEnumerable<AccountBalanceMetrix>? balances = Array.Empty<AccountBalanceMetrix>();
@@ -221,7 +222,7 @@ else
         zeroAccountBalanceYear = 0;
         zeroAccountBalanceAge = 0;
 
-        this.histogramBucket = new HistogramBucket(73, NUMBER_OF_BUCKETS, BUCKET_WIDTH); // 30 buckets, starting at 73-74
+        this.histogramBucket = new HistogramBucket(STARTING_AGE_BUCKET, NUMBER_OF_BUCKETS, BUCKET_WIDTH);
         scenarioRunCount = 0;
 
         LoadAllAccountHolders();
@@ -282,9 +283,6 @@ else
 
                     scenarioRunCount++;  
 
-                    //  TODO    Push this business logic to a web API.
-                    //  Send all balances to an API that finds the age when the balance goes to 0
-                    //  Save those to a List, then send this list to another API that returns the histogram values.
                     foreach (var balance in balances)
                     {
                         age = balance.CurrentYear - yearOfBirth;
@@ -429,6 +427,15 @@ else
             scenarioParameters.DecimalValue = selectedSocialSecurityMonthlyPayout;
             parameterBag.Add(scenarioParameters);
 
+            scenarioParameters = new ScenarioParameters(LifeEventType.SavingChange.ToString());
+            scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.StartingYear.ToString()).FirstOrDefault().Year;
+            scenarioParameters.DecimalValue = MonthlySavingsContribution;
+            parameterBag.Add(scenarioParameters);
+
+            scenarioParameters = new ScenarioParameters(LifeEventType.SavingChange.ToString());
+            scenarioParameters.LifeEventStartingYear = this.yearOfBirth + RetirementAge;
+            scenarioParameters.DecimalValue = 0;
+            parameterBag.Add(scenarioParameters);
 
             //  The remaining financial events can happen more than once, so loop through the collection for each type.
             var inflationRateChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.InflationRateChange.ToString());
