@@ -1,7 +1,12 @@
-﻿namespace StatisticalTools
+﻿using MathNet.Numerics;
+using MathNet.Numerics.Statistics;
+
+namespace StatisticalTools
 {
     public class HistogramBucket
     {
+        //  Experimenting with Math.Net library, not displaying 'cause its properties are doubles.
+        protected MathNet.Numerics.Statistics.RunningStatistics runningStats;
         protected int bucketWidth;
         protected int numberOfBuckets;
         protected int lowestBucket;
@@ -20,12 +25,28 @@
         public int NumberOfBuckets { get { return this.numberOfBuckets; } }
         public decimal Min { get { return this.min; } }
         public decimal Max { get { return this.max; } }
-        public decimal Mean { get { return this.mean; } }
+        public decimal Mean {  get { return this.mean;} }
         public decimal Median { get { return this.median; } }
-        public decimal MinusOneSigma { get { return this.minusOneSigma; } }
+        public decimal MinusOneSigma {
+            get {
+                // Set breakpoint here for checking values produced by Math.Net library. This version does not have the Median property, the documentation shows it. WTF?????
+                double minimumMDN = this.runningStats.Minimum;
+                double maximumMDN = this.runningStats.Maximum;
+                double meanMDN = this.runningStats.Mean;
+                double skewnessMMDN = this.runningStats.Skewness;
+                double countMDN = this.runningStats.Count;
+                double standardDeviationMDN = this.runningStats.StandardDeviation;
+                double minusOneSigmaMDN = meanMDN - standardDeviationMDN;
+
+                // Ignore the Math.Net lib results and keep using what we had.
+                return this.minusOneSigma; 
+            }
+        }
 
         public HistogramBucket(int lowestBucket, int numberOfBuckets, int bucketWidth)
         {
+            runningStats = new RunningStatistics();
+
             this.lowestBucket = lowestBucket;
             this.numberOfBuckets = numberOfBuckets;
             this.min = 0;
@@ -73,6 +94,7 @@
             //if (value < _min) { _min = value; }
             this.data.Add(value);
 
+            runningStats.Push((double)value);
             AddDataPointToBucket(value);
 
             this.data.Sort();
