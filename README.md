@@ -16,6 +16,24 @@ The balance calculations are done in the web API. It is up to code in the UI to 
 
 For each year of a simulation run, values for inflation and rate of return are randomly generated within a range determined by the input parameters.
 
+![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/de09af4f-7023-4f5c-b239-099b56809d65)
+
+
+
+
+![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/3ae50c5d-ecd5-41b0-a0f8-e84cd7ace917)
+
+
+
+
+![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/6ee97560-5bc4-42c8-83d4-55fd2d5bd463)
+
+
+
+
+![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/5ddd42a6-5f9f-423c-9c26-5dae487394ea)
+
+
 ### Installation
 
 Currently, there is no installer for yarp. It requires a Windows development environment and some proficiency in Visual Studio and the .NET framework.
@@ -59,7 +77,7 @@ Verify the DB contents with the Swagger's BalanceCalculatorAccountHolderApi POST
 
 Start the UI in debug.
 
-![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/de09af4f-7023-4f5c-b239-099b56809d65)
+
 
 
 
