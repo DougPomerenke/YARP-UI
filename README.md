@@ -20,6 +20,46 @@ For each year of a simulation run, values for inflation and rate of return are r
 
 Currently, there is no installer for yarp. It requires a Windows development environment and some proficiency in Visual Studio and the .NET framework.
 
+OS:
+
+Windows 10 Pro
+
+Platform:
+
+.NET 8
+
+Development Environment:
+
+Microsoft Visual Studio Community 2022 (64-bit) - Preview Version 17.9.0 Preview 1.1 (Or later)
+
+Cosmsos Db Emulator:
+
+https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-mongodb  (Link valid, 1/9/2024)
+
+Dependencies:
+
+Microsoft.EntityFrameworkCore.Cosmos  (API solution)
+
+Blazor.Bootstrap  (UI solution)
+
+
+Get your copy of the source code for both solutions, YARP-UI and YARP-API
+
+Install the Cosmos DB emulation. Follow the link for download link and instructions.
+
+Launch the Azure Cosmos DB Emulator from the Start Menu. Bookmark this URL for later use. If you close this tab, the emulator continues to run.
+
+Copy the Account Key produced by the DB install into Program.cs in the BalanceCalculatorAccountHolderApi project.
+
+Start the API in debug, there should be two Swaggar Windows that open.
+
+Copy the contents of the YARP-API "src\Sample Data for CosmosDB.txt" file into the Swagger BalanceCalculatorAccountHolderApi POST method's request body. This should created the DB schema and insert the data.
+
+Verify the DB contents with the Swagger's BalanceCalculatorAccountHolderApi POST method.
+
+Start the UI in debug.
+
+![image](https://github.com/DougPomerenke/YARP-UI/assets/141588660/de09af4f-7023-4f5c-b239-099b56809d65)
 
 
 
