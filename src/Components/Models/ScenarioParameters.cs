@@ -10,7 +10,7 @@
             {
                 if (LifeEventType == "StartingYear") { return "Initial Savings Balance"; }
                 else if (LifeEventType == "RetirementYear") { return "Monthly Retirement Income"; }
-                else if (LifeEventType == "SavingChange") { return "Annual Savings Contribution"; }
+                else if (LifeEventType == "SavingChange") { return "Monthly Savings Contribution"; }
                 else if (LifeEventType == "InvestmentYieldChange") { return "Investment Yield Range"; }
                 else if (LifeEventType == "InflationRateChange") { return "Inflation Rate Range"; }
                 else if (LifeEventType == "SocialSecurityPayoutYear") { return "Monthly Social Security Payment"; }
