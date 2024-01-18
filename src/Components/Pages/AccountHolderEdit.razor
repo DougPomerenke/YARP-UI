@@ -1,6 +1,5 @@
 ﻿@page "/accountholderedit"
 @page "/accountholderedit/{id:Guid}"
-@using Microsoft.AspNetCore.Components.QuickGrid;
 @rendermode InteractiveServer
 @using System.Text.Json
 @using System.Text.Json.Serialization
@@ -10,7 +9,9 @@
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory ClientFactory
 @inject IAccountHolderService AccountHolderService
-@attribute [StreamRendering(true)]
+
+
+
 
 @if (Id == null)
 {
@@ -25,8 +26,6 @@ else
 
 @if (_render)
 {
-    <h2>Account Holder</h2>
-
     <EditForm Model="@AccountHolderModel" OnSubmit="HandleSubmit">
 
         <div>
@@ -93,13 +92,12 @@ else
         }
         </div>
 
-
-
-
         <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Update Account Holder</button>
         <button type="button" class="btn btn-danger" @onclick="DeleteAccountHolder">Delete Account Holder</button>
     </EditForm>
+
 }
+
 
 @code {
     [Parameter]
