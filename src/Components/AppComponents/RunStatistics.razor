@@ -4,16 +4,16 @@
 @attribute [StreamRendering(true)]
 @namespace FinancialPlanner.Components.AppComponents
 
-<table style="width: 100%;">
+<small>
+    <table class="table table-condensed table-borderless">
     <thead>
         <tr>
             <th>Statistics</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td style="width: 100%;">
+            <td>
                 <small>
                     <p role="status">Total Scenario Runs: @histogramBucket.NumberOfElements</p>
                     <p role="status">Zero Account Balance Age Min: @histogramBucket.Min</p>
@@ -26,7 +26,7 @@
         </tr>
     </tbody>
 </table>
-
+</small>
 
 @code {
     [Parameter]

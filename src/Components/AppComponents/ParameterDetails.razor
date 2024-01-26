@@ -4,15 +4,11 @@
 @attribute [StreamRendering(true)]
 @namespace FinancialPlanner.Components.AppComponents
 
-<small><table class="table" width="100%">
+<small>
+<table class="table table-sm"><small>
     <thead>
-            <tr>
-                <th>Parameters</th>
-            </tr>
         <tr>
-                <th width="1">Financial Event Starting Year</th>
-                <th width="1">Financial Event Type</th>
-                <th width="1">Value</th>
+            <th>Parameters</th>
         </tr>
     </thead>
     <tbody>
@@ -24,9 +20,9 @@
                 <td>@scenarioParameters.DisplayValue</td>
             </tr>
         }
-    </tbody>
-</table></small>
-
+    </tbody></small>
+</table>
+</small>
 
 @code {
     [Parameter]

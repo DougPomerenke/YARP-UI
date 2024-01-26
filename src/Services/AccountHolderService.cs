@@ -8,6 +8,7 @@ using FinancialPlanner.Components.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using FinancialPlanner.Components.Pages;
@@ -43,7 +44,7 @@ namespace FinancialPlanner.Services
 
             try
             {
-                string pathSetting = _configuration.GetSection("ApiUrls:AccountHolders").Value;
+                string pathSetting = _configuration.GetSection("ApiUrls:GetAccountHolders").Value;
 
                 Uri uri = new Uri(pathSetting);
 
@@ -60,7 +61,7 @@ namespace FinancialPlanner.Services
 
         public async Task<AccountHolder> GetAccountHolder(string id)
         {
-                string pathSetting = _configuration.GetSection("ApiUrls:AccountHolders").Value;
+                string pathSetting = _configuration.GetSection("ApiUrls:GetAccountHolders").Value;
 
                 Uri uri = new Uri(pathSetting + id);
 
@@ -85,45 +86,59 @@ namespace FinancialPlanner.Services
 
         public async Task CreateAccountHolder(AccountHolder accountHolder)
         {
-            string pathSetting = _configuration.GetSection("ApiUrls:AccountHolders").Value;
+            string pathSetting = _configuration.GetSection("ApiUrls:CreateAccountHolder").Value;
 
+            pathSetting = pathSetting;
             Uri uri = new Uri(pathSetting);
 
-            var result = await _httpClient.PostAsJsonAsync(uri, accountHolder);
-            await SetAccountHolders(result);
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync(uri, accountHolder);
 
+                await SetAccountHolders(result);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
         }
+        public async Task UpdateAccountHolder(AccountHolder accountHolder)
+        {
+            string pathSetting = _configuration.GetSection("ApiUrls:UpdateAccountHolder").Value;
 
+            pathSetting = pathSetting + accountHolder.id;
+            Uri uri = new Uri(pathSetting);
+            
+            var result = await _httpClient.PutAsJsonAsync<AccountHolder>(uri, accountHolder);
+            await SetAccountHolders(result);
+        }
+
+        public async Task DeleteAccountHolder(string id)
+        {
+            string pathSetting = _configuration.GetSection("ApiUrls:DeleteAccountHolder").Value;
+
+            pathSetting = pathSetting;
+            Uri uri = new Uri(pathSetting);
+
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync(uri, id);
+
+                await SetAccountHolders(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        // Display the manageaccountholders page
         private async Task SetAccountHolders(HttpResponseMessage result)
         {
             var response = await result.Content.ReadFromJsonAsync<List<AccountHolder>>();
             AccountHolders = response;
             _navigationManager.NavigateTo("manageaccountholders");
         }
-
-
-        public async Task UpdateAccountHolder(AccountHolder accountHolder)
-        {
-            string pathSetting = _configuration.GetSection("ApiUrls:UpdateAccountHolders").Value;
-
-            pathSetting = pathSetting + accountHolder.id;
-            Uri uri = new Uri(pathSetting);
-            
-
-            var result = await _httpClient.PutAsJsonAsync<AccountHolder>(uri, accountHolder);
-            await SetAccountHolders(result);
-        }
-
-        public async Task DeleteAccountHolder(string id)
-        { 
-        
-        }
-
-        //Task<IEnumerable<Scenario>> GetScenarios(string pathSetting)
-        //{ }
-
-        //Task<IEnumerable<FinancialEvent>> GetFinancialEvents(string pathSetting)
-        // { }
     }
 }

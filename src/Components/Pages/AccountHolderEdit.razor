@@ -28,71 +28,129 @@ else
 {
     <EditForm Model="@AccountHolderModel" OnSubmit="HandleSubmit">
 
-        <div>
-            <label for="firstname">First Name</label>
-            <InputText id="firstname" @bind-Value="AccountHolderModel.FirstName" class="form-control"></InputText>
-        </div>
-        <div>
-            <label for="lastname">Last Name</label>
-            <InputText id="lastname" @bind-Value="AccountHolderModel.LastName" class="form-control"></InputText>
-        </div>
 
-        <div>
-            <label for="dateofbirth">Date Of Birth</label>
-            <InputText id="dateofbirth" @bind-Value="AccountHolderModel.DateOfBirth" class="form-control"></InputText>
-        </div>
+        <table class="table table-bordered">
+        <thead>
+        <tr><th>First Name</th></tr>
+        </thead>
+        <tbody>
+         <tr><td><InputText id="firstname" @bind-Value="AccountHolderModel!.FirstName" class="form-control"></InputText></td></tr>
+        </tbody>
+        </table>
+        <table class="table table-bordered">
+        <thead>
+        <tr><th>Last Name</th></tr>
+        </thead>
+        <tbody>
+         <tr><td><InputText id="lastname" @bind-Value="AccountHolderModel!.LastName" class="form-control"></InputText></td></tr>
+        </tbody>
+        </table>
+        <table class="table table-bordered">
+        <thead>
+        <tr><th>Date Of Birth</th></tr>
+        </thead>
+        <tbody>
+         <tr><td><InputText id="dateofbirth" @bind-Value="AccountHolderModel!.DateOfBirth" class="form-control"></InputText></td></tr>
+        </tbody>
+        </table>
+        <table class="table table-bordered">
+        <thead>
+        <tr><th>Account Starting Balance</th></tr>
+        </thead>
+        <tbody>
+         <tr><td><InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel!.AccountStartingBalance" class="form-control"></InputNumber></td></tr>
+        </tbody>
+        </table>
 
-        <div>
-            <label for="accountstartingbalance">Account Starting Balance</label>
-            <InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel.AccountStartingBalance" class="form-control"></InputNumber>
-        </div>
-        <div><p></p></div>
-        <h2>Scenarios</h2>
-             <div>
-        <label for="name">Scenario Name</label>
-        <InputText id="name" @bind-Value="AccountHolderModel.Scenarios[0].Name" class="form-control"></InputText>
-    </div>
-        
-    <div>
-        <label for="retirementage">Retirement Age</label>
-        <InputNumber id="retirementage" @bind-Value="AccountHolderModel.Scenarios[0].RetirementAge" class="form-control"></InputNumber>
-    </div>
+        <Accordion AlwaysOpen=true>
 
-            <div>
-        <label for="socialsecuritypayoutage">Social Security Payout Age</label>
-    <InputNumber id="socialsecuritypayoutage" @bind-Value="AccountHolderModel.Scenarios[0].SocialSecurityPayoutAge" class="form-control"></InputNumber>
-    </div>
+        <AccordionItem>
+            <TitleTemplate><Icon Name="IconName.Toggles" Class="me-1" />Scenarios</TitleTemplate>
+            <Content>
+                <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th>Scenario Name</th>
+                    <th>Retirement Age</th>
+                    <th>Social Security Payout Age</th>
+                    <th>Expected Monthly Retirement Income</th>
+                    <th>Pre Retirement Monthly Savings Contribution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var scenario in AccountHolderModel!.Scenarios)
+                {
+                    <tr>
+                        <td><InputText  @bind-Value="scenario!.Name" class="form-control"></InputText></td>
+                        <td><InputNumber  @bind-Value="scenario!.RetirementAge" class="form-control"></InputNumber></td>
+                        <td><InputNumber  @bind-Value="scenario!.SocialSecurityPayoutAge" class="form-control"></InputNumber></td>
+                        <td><InputNumber  @bind-Value="scenario!.ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber></td>
+                        <td><InputNumber  @bind-Value="scenario!.PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber></td>
+                     </tr>
+                }
+                </tbody>
+                </table>
 
-            <div>
-        <label for="expectedmonthlyretirementincome">Expected Monthly Retirement Income</label>
-    <InputNumber id="expectedmonthlyretirementincome" @bind-Value="AccountHolderModel.Scenarios[0].ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber>
-    </div>
+            </Content>
+        </AccordionItem>
 
-            <div>
-        <label for="preretirementmonthlysavingscontribution">Pre Retirement Monthly Savings Contribution</label>
-    <InputNumber id="preretirementmonthlysavingscontribution" @bind-Value="AccountHolderModel.Scenarios[0].PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber>
-    </div>
-        <div><p></p></div>
-        <h2>Financial Events</h2>
+        <AccordionItem>
+            <TitleTemplate><Icon Name="IconName.Toggles" Class="me-1" />Financial Events</TitleTemplate>
+        <Content>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th>Event Type</th>
+                    <th>Starting Year</th>
+                    <th>Value</th>
+                    <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var financialEvent in AccountHolderModel!.FinancialEvents)
+                {
+                    <tr>
+                        <td><InputText id="lifeeventdisplaymessage" @bind-Value="financialEvent!.Type" class="form-control"></InputText></td>
+                        <td><InputNumber id="lifeeventstartingyear" @bind-Value="financialEvent!.Year" class="form-control"></InputNumber></td>
+                        <td><InputNumber id="payloaditem0" @bind-Value="financialEvent!.Payload[0]" class="form-control"></InputNumber></td>
+                        @if(financialEvent.Payload.Length>1)
+                                {
+                            <td><InputNumber id="payloaditem1" @bind-Value="financialEvent!.Payload[1]" class="form-control"></InputNumber></td>
+                                }
+                     </tr>
+                }
+                </tbody>
+                </table>
+        </Content> 
+        </AccordionItem>
 
-    <div>
-        @foreach (var financialEvent in AccountHolderModel.FinancialEvents)
-        {
-            <tr>
-                <div>
-                <td><InputText id="lifeeventdisplaymessage" @bind-Value="financialEvent.Type" class="form-control"></InputText></td>
-                <td><InputNumber id="lifeeventstartingyear" @bind-Value="financialEvent.Year" class="form-control"></InputNumber></td>
-                <td><InputNumber id="payloaditem0" @bind-Value="financialEvent.Payload[0]" class="form-control"></InputNumber></td>
-                @if(financialEvent.Payload.Length>1)
-                        {
-                    <td><InputNumber id="payloaditem1" @bind-Value="financialEvent.Payload[1]" class="form-control"></InputNumber></td>
-                        }
-                </div>
-            </tr>
-        }
-        </div>
+         <AccordionItem>
+            <TitleTemplate><Icon Name="IconName.Toggles" Class="me-1" />Social Security Payouts</TitleTemplate>
+        <Content>
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th>Age</th>
+                <th>Monthly Payment</th>
+                </tr>
+            </thead>
+           <tbody>
 
-        <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Update Account Holder</button>
+            @foreach(SocialSecurityPayout po in AccountHolderModel.SocialSecurityPayouts)
+            {
+                <tr>
+                <td><label class="form-control">@po.StartingAge</label></td>
+                <td><InputNumber id="socialsecuritypayouts" @bind-Value="po.MonthlyPayout" class="form-control"></InputNumber></td>
+                </tr>
+            }
+            </tbody>
+            </table>
+        </Content>
+        </AccordionItem>
+
+    </Accordion>
+
+        <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">@this.submitButtonCaption</button>
         <button type="button" class="btn btn-danger" @onclick="DeleteAccountHolder">Delete Account Holder</button>
     </EditForm>
 
@@ -104,35 +162,36 @@ else
     public string? Id { get; set; }
 
     [SupplyParameterFromForm]
-    public AccountHolder? AccountHolderModel { get; set; }
+    public AccountHolder? AccountHolderModel { get; set; } = new();
 
     private bool _render;
+    private string submitButtonCaption;
+    private int buttonEventCount;
 
     protected override void OnInitialized() => AccountHolderModel ??= new();
 
     protected override async Task OnParametersSetAsync()
     {
+        this.buttonEventCount = 0;
+
         if (Id == null)
         {
-            //accountHolder.FinancialEvents = AccountHolderService.
-            //hero.ComicId = hero.Comic.Id;
+            AccountHolder newAccountHolder = new AccountHolder();
+
+            AccountHolderModel = newAccountHolder;
+
+            this.submitButtonCaption = "Save";
+
+            if(AccountHolderModel.Scenarios!=null && AccountHolderModel.FinancialEvents!=null)
+            {
+                _render = true;
+            }
         }
         else
         {
+            this.submitButtonCaption = "Update";
+
             AccountHolderModel = await AccountHolderService.GetAccountHolder(Id);
-
-            string scenarioSetName = AccountHolderModel.Scenarios[0].Name;
-            string scenarioPreRetirementMonthlySavingsContribution = AccountHolderModel.Scenarios[0].PreRetirementMonthlySavingsContribution.ToString();
-            string scenarioRetirementAge = AccountHolderModel.Scenarios[0].RetirementAge.ToString();
-            string scenarioSocialSecurityPayoutAge = AccountHolderModel.Scenarios[0].SocialSecurityPayoutAge.ToString();
-            string scenarioExpectedMonthlyRetirementIncome = AccountHolderModel.Scenarios[0].ExpectedMonthlyRetirementIncome.ToString();
-
-            int financialEventCount = AccountHolderModel.FinancialEvents.Count;
-
-            decimal eventStartYear = AccountHolderModel.FinancialEvents[0].Year;
-            string eventType = AccountHolderModel.FinancialEvents[0].Type;
-            decimal[] payload0 = AccountHolderModel.FinancialEvents[0].Payload;
-            decimal[] payload1 = AccountHolderModel.FinancialEvents[1].Payload;
 
             if(AccountHolderModel.Scenarios!=null && AccountHolderModel.FinancialEvents!=null)
             {
@@ -143,13 +202,18 @@ else
 
     async Task HandleSubmit()
     {
-        if (Id == null)
+        this.buttonEventCount++;    //  Even is firing twice, causes problem when creating new.
+
+        if (this.buttonEventCount == 1)
         {
-            await AccountHolderService.CreateAccountHolder(AccountHolderModel);
-        }
-        else
-        {
-            await AccountHolderService.UpdateAccountHolder(AccountHolderModel);
+            if (Id == null)
+            {
+                await AccountHolderService.CreateAccountHolder(AccountHolderModel);
+            }
+            else
+            {
+                await AccountHolderService.UpdateAccountHolder(AccountHolderModel);
+            }
         }
     }
 

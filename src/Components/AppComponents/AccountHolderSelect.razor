@@ -4,29 +4,30 @@
 @attribute [StreamRendering(true)]
 @namespace FinancialPlanner.Components.AppComponents
 
-<table style="width: 100%;">
+<small>
+    <table class="table table-condensed table-borderless">
     <thead>
         <tr>
             <th>Account Holder</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td style="width: 10%;">
-                <div>
-                    <select class="select-element" @bind="SelectedAccountHolderId">
-                        @{if (AccountHolderList!= null)}
-                        <option value="">Select One</option>
-                        @foreach (var item in AccountHolderList)
-                        {
-                            <option value="@item.id">@item.FirstName @item.LastName</option>
-                        }
-                    </select>
-                </div>
-            </td>
-        </tr>
+        <tr><td>
+            <select class="select-element" @bind="SelectedAccountHolderId">
+                @{
+                    if (AccountHolderList != null)
+                    }
+                    <option value="">Select One</option>
+                    @foreach (var item in AccountHolderList)
+                    {
+                        <option value="@item.id">@item.FirstName @item.LastName</option>
+                    }
+            </select>
+            </td></tr>
     </tbody>
 </table>
+</small>
+
 
 
 @code {
