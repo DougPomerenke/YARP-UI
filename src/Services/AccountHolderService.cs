@@ -118,12 +118,12 @@ namespace FinancialPlanner.Services
         {
             string pathSetting = _configuration.GetSection("ApiUrls:DeleteAccountHolder").Value;
 
-            pathSetting = pathSetting;
+            pathSetting = pathSetting + id;
             Uri uri = new Uri(pathSetting);
 
             try
             {
-                var result = await _httpClient.PostAsJsonAsync(uri, id);
+                var result = await _httpClient.DeleteAsync(uri);
 
                 await SetAccountHolders(result);
             }

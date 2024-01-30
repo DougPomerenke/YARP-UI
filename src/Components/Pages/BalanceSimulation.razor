@@ -412,57 +412,57 @@ else
             decimal selectedSocialSecurityMonthlyPayout = accountHoldersSocialSecurityPayouts.Where(c => c.StartingAge == SelectedSocialSecurityPayoutAge).FirstOrDefault().MonthlyPayout;
 
             //   The first three financial events happen only once
-            ScenarioParameters scenarioParameters = new ScenarioParameters(LifeEventType.StartingYear.ToString());
-            scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.StartingYear.ToString()).FirstOrDefault().Year;
+            ScenarioParameters scenarioParameters = new ScenarioParameters(FinancialEventType.StartingYear.ToString());
+            scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == FinancialEventType.StartingYear.ToString()).FirstOrDefault().Year;
             scenarioParameters.DecimalValue = this.selectedAccountHolder.AccountStartingBalance;
             parameterBag.Add(scenarioParameters);
 
-            scenarioParameters = new ScenarioParameters(LifeEventType.RetirementYear.ToString());
+            scenarioParameters = new ScenarioParameters(FinancialEventType.RetirementYear.ToString());
             scenarioParameters.LifeEventStartingYear = this.yearOfBirth + RetirementAge;
             scenarioParameters.DecimalValue= MonthlyRetirementIncome;
             parameterBag.Add(scenarioParameters);
 
-            scenarioParameters = new ScenarioParameters(LifeEventType.SocialSecurityPayoutYear.ToString());
+            scenarioParameters = new ScenarioParameters(FinancialEventType.SocialSecurityPayoutYear.ToString());
             scenarioParameters.LifeEventStartingYear = this.yearOfBirth + SelectedSocialSecurityPayoutAge;
             scenarioParameters.DecimalValue = selectedSocialSecurityMonthlyPayout;
             parameterBag.Add(scenarioParameters);
 
-            scenarioParameters = new ScenarioParameters(LifeEventType.SavingChange.ToString());
-            scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.StartingYear.ToString()).FirstOrDefault().Year;
+            scenarioParameters = new ScenarioParameters(FinancialEventType.SavingChange.ToString());
+            scenarioParameters.LifeEventStartingYear = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == FinancialEventType.StartingYear.ToString()).FirstOrDefault().Year;
             scenarioParameters.DecimalValue = MonthlySavingsContribution;
             parameterBag.Add(scenarioParameters);
 
-            scenarioParameters = new ScenarioParameters(LifeEventType.SavingChange.ToString());
+            scenarioParameters = new ScenarioParameters(FinancialEventType.SavingChange.ToString());
             scenarioParameters.LifeEventStartingYear = this.yearOfBirth + RetirementAge;
             scenarioParameters.DecimalValue = 0;
             parameterBag.Add(scenarioParameters);
 
             //  The remaining financial events can happen more than once, so loop through the collection for each type.
-            var inflationRateChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.InflationRateChange.ToString());
+            var inflationRateChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == FinancialEventType.InflationRateChange.ToString());
 
             foreach (FinancialEvent fe in inflationRateChangeEvent)
             {
-                scenarioParameters = new ScenarioParameters(LifeEventType.InflationRateChange.ToString());
+                scenarioParameters = new ScenarioParameters(FinancialEventType.InflationRateChange.ToString());
                 scenarioParameters.LifeEventStartingYear = fe.Year;
                 scenarioParameters.DecimalArray = fe.Payload;
                 parameterBag.Add(scenarioParameters);
             }
 
-            var investmentYieldChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.InvestmentYieldChange.ToString());
+            var investmentYieldChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == FinancialEventType.InvestmentYieldChange.ToString());
 
             foreach (FinancialEvent fe in investmentYieldChangeEvent)
             {
-                scenarioParameters = new ScenarioParameters(LifeEventType.InvestmentYieldChange.ToString());
+                scenarioParameters = new ScenarioParameters(FinancialEventType.InvestmentYieldChange.ToString());
                 scenarioParameters.LifeEventStartingYear = fe.Year;
                 scenarioParameters.DecimalArray = fe.Payload;
                 parameterBag.Add(scenarioParameters);
             }
 
-            var loanPayOffYearChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == LifeEventType.LoanPayOffYear.ToString());
+            var loanPayOffYearChangeEvent = this.selectedAccountHolder.FinancialEvents.Where(c => c.Type == FinancialEventType.LoanPayOffYear.ToString());
 
             foreach (FinancialEvent fe in loanPayOffYearChangeEvent)
             {
-                scenarioParameters = new ScenarioParameters(LifeEventType.LoanPayOffYear.ToString());
+                scenarioParameters = new ScenarioParameters(FinancialEventType.LoanPayOffYear.ToString());
                 scenarioParameters.LifeEventStartingYear = fe.Year;
                 scenarioParameters.DecimalValue = fe.Payload[0];
                 parameterBag.Add(scenarioParameters);
@@ -471,16 +471,4 @@ else
 
         return parameterBag;
     }
-
-    public enum LifeEventType
-    {
-        StartingYear,
-        RetirementYear,
-        SavingChange,
-        InvestmentYieldChange,
-        InflationRateChange,
-        SocialSecurityPayoutYear,
-        LoanPayOffYear
-    }
-
 }

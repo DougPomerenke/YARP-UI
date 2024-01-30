@@ -120,9 +120,15 @@ namespace FinancialPlanner.Components.Models
 
     public class FinancialEvent
     {
+        private Guid id;
+
         private decimal[]? payload;
         private string type;
 
+        public Guid Id
+        {
+            get { return this.id; }
+        }
         [JsonPropertyName("type")]
         public string Type 
         {
@@ -142,6 +148,7 @@ namespace FinancialPlanner.Components.Models
 
         public FinancialEvent(string type)
         {
+            this.id = Guid.NewGuid();   
             this.payload = new decimal[2];
             this.payload[0] = 0;
             this.payload[1] = 0;
@@ -149,6 +156,15 @@ namespace FinancialPlanner.Components.Models
         }
     }
 
-
+    public enum FinancialEventType
+    {
+        StartingYear,
+        RetirementYear,
+        SavingChange,
+        InvestmentYieldChange,
+        InflationRateChange,
+        SocialSecurityPayoutYear,
+        LoanPayOffYear
+    }
 
 }

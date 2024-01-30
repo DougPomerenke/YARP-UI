@@ -26,7 +26,7 @@ else
 
 @if (_render)
 {
-    <EditForm Model="@AccountHolderModel" OnSubmit="HandleSubmit">
+    <EditForm Model="@AccountHolderModel">
 
 
         <table class="table table-bordered">
@@ -112,15 +112,65 @@ else
                     <tr>
                         <td><InputText id="lifeeventdisplaymessage" @bind-Value="financialEvent!.Type" class="form-control"></InputText></td>
                         <td><InputNumber id="lifeeventstartingyear" @bind-Value="financialEvent!.Year" class="form-control"></InputNumber></td>
-                        <td><InputNumber id="payloaditem0" @bind-Value="financialEvent!.Payload[0]" class="form-control"></InputNumber></td>
-                        @if(financialEvent.Payload.Length>1)
+
+                        @if(financialEvent.Type==FinancialEventType.InflationRateChange.ToString() || financialEvent.Type==FinancialEventType.InvestmentYieldChange.ToString() || financialEvent.Type==FinancialEventType.LoanPayOffYear.ToString())
+                        {
+                                <td><InputNumber id="payloaditem0" @bind-Value="financialEvent!.Payload[0]" class="form-control"></InputNumber></td>
+                                @if(financialEvent.Payload.Length>1)
                                 {
-                            <td><InputNumber id="payloaditem1" @bind-Value="financialEvent!.Payload[1]" class="form-control"></InputNumber></td>
+                                        <td><InputNumber id="payloaditem1" @bind-Value="financialEvent!.Payload[1]" class="form-control"></InputNumber></td>
                                 }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                    <td><button type="button" class="btn btn-danger" value=@financialEvent!.Id @onclick="DeleteFinancialEvent">Delete</button></td>
+                        }
+                        else
+                        {
+                            <td></td><td></td>
+                            <td><button type="button" class="btn btn-danger" value=@financialEvent!.Id @onclick="DeleteFinancialEvent">Delete</button></td>
+                        }
+
                      </tr>
                 }
+
+                <tr>
+                    <td></td>
+                    <td>
+                    <select class="select" id="selectfinancialevent" data-style="btn-success" @bind="selectedNewFinancialEventType" > Select New Financial Event >
+                    <option value="">Select New Financial Event</option>
+                    <option value="@FinancialEventType.StartingYear">@FinancialEventType.StartingYear</option>
+                    <option value="@FinancialEventType.InflationRateChange">@FinancialEventType.InflationRateChange</option>
+                    <option value="@FinancialEventType.InvestmentYieldChange">@FinancialEventType.InvestmentYieldChange</option>
+                    <option value="@FinancialEventType.SavingChange">@FinancialEventType.SavingChange</option>
+                    <option value="@FinancialEventType.LoanPayOffYear">@FinancialEventType.LoanPayOffYear</option>
+                    </select>
+                    </td>
+                                       
+                    <td>
+                        <button type="submit" class="btn btn-primary" @onclick="HandleAddFinancialEvent">Add Financial Event</button>
+                    </td>
+
+                </tr>
                 </tbody>
                 </table>
+@*                 <button type="submit" class="btn btn-primary" @onclick="HandleAddFinancialEvent">Add Financial Event</button> *@
+
+@*             <div class="dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" @onclick="HandleAddFinancialEvent">Add Financial Event</button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item">@FinancialEventType.StartingYear</a></li>
+                <li><a class="dropdown-item">@FinancialEventType.InflationRateChange</a></li>
+                <li><a class="dropdown-item">@FinancialEventType.InflationRateChange</a></li>
+                <li><a class="dropdown-item">@FinancialEventType.SavingChange</a></li>
+                <li><a class="dropdown-item">@FinancialEventType.LoanPayOffYear</a></li>
+            </ul>
+            </div> *@
+
+
+
+
         </Content> 
         </AccordionItem>
 
@@ -167,6 +217,8 @@ else
     private bool _render;
     private string submitButtonCaption;
     private int buttonEventCount;
+    private string selectedNewFinancialEventType;
+
 
     protected override void OnInitialized() => AccountHolderModel ??= new();
 
@@ -215,6 +267,34 @@ else
                 await AccountHolderService.UpdateAccountHolder(AccountHolderModel);
             }
         }
+    }
+
+    async Task HandleAddFinancialEvent()
+    {
+        if(selectedNewFinancialEventType !=null)
+        {
+            FinancialEvent financialEvent = new FinancialEvent(selectedNewFinancialEventType);
+
+            AccountHolderModel!.FinancialEvents.Add(financialEvent);
+        }
+
+
+
+        //_render = true;
+    }
+
+    async Task DeleteFinancialEvent()
+    {
+        this.buttonEventCount++;    //  Even is firing twice, causes problem when creating new.
+
+        if (this.buttonEventCount == 1)
+        {
+            // Only working for the last financial event
+            AccountHolderModel.FinancialEvents.Remove(AccountHolderModel.FinancialEvents[AccountHolderModel.FinancialEvents.Count-1]);
+
+            await AccountHolderService.UpdateAccountHolder(AccountHolderModel);
+
+        }      
     }
 
     async Task DeleteAccountHolder()
