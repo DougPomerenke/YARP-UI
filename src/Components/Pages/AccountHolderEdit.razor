@@ -26,41 +26,28 @@ else
 
 @if (_render)
 {
-    <EditForm Model="@AccountHolderModel">
-
-
-        <table class="table table-bordered">
-        <thead>
-        <tr><th>First Name</th></tr>
-        </thead>
-        <tbody>
-         <tr><td><InputText id="firstname" @bind-Value="AccountHolderModel!.FirstName" class="form-control"></InputText></td></tr>
-        </tbody>
-        </table>
-        <table class="table table-bordered">
-        <thead>
-        <tr><th>Last Name</th></tr>
-        </thead>
-        <tbody>
-         <tr><td><InputText id="lastname" @bind-Value="AccountHolderModel!.LastName" class="form-control"></InputText></td></tr>
-        </tbody>
-        </table>
-        <table class="table table-bordered">
-        <thead>
-        <tr><th>Date Of Birth</th></tr>
-        </thead>
-        <tbody>
-         <tr><td><InputText id="dateofbirth" @bind-Value="AccountHolderModel!.DateOfBirth" class="form-control"></InputText></td></tr>
-        </tbody>
-        </table>
-        <table class="table table-bordered">
-        <thead>
-        <tr><th>Account Starting Balance</th></tr>
-        </thead>
-        <tbody>
-         <tr><td><InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel!.AccountStartingBalance" class="form-control"></InputNumber></td></tr>
-        </tbody>
-        </table>
+    <EditForm method="post" Model="AccountHolderModel" >
+        <DataAnnotationsValidator />
+        <div class="mb-2">
+            <label for="firstname" class="form-label">First Name</label>
+            <InputText id="firstname" @bind-Value="AccountHolderModel!.FirstName" class="form-control" />
+            <ValidationMessage For="() => AccountHolderModel.FirstName" class="text-danger" />
+        </div>
+        <div class="mb-2">
+            <label for="lastname" class="form-label">Last Name</label>
+             <InputText id="lastname" @bind-Value="AccountHolderModel!.LastName" class="form-control"></InputText>
+            <ValidationMessage For="() => AccountHolderModel.LastName" class="text-danger" />
+        </div>
+        <div class="mb-2">
+            <label for="dateofbirth" class="form-label">Date of Birth</label>
+            <InputText id="dateofbirth" @bind-Value="AccountHolderModel!.DateOfBirth" class="form-control"></InputText>
+            <ValidationMessage For="() => AccountHolderModel.DateOfBirth" class="text-danger" />
+        </div>
+        <div class="mb-2">
+            <label for="accountstartingbalance" class="form-label">Account Starting Balance</label>
+            <InputNumber id="accountstartingbalance" @bind-Value="AccountHolderModel!.AccountStartingBalance" class="form-control"></InputNumber>
+            <ValidationMessage For="() => AccountHolderModel.AccountStartingBalance" class="text-danger" />
+        </div>
 
         <Accordion AlwaysOpen=true>
 
@@ -301,5 +288,8 @@ else
     {
         await AccountHolderService.DeleteAccountHolder(AccountHolderModel.id);
     }
-
+        async Task HandleValidSubmit()
+    {
+        
+    }
 }

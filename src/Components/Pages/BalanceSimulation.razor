@@ -137,14 +137,14 @@ else
     SocialSecurityPayout socialSecurityPayout;
 
     // Parameters that can be changed in the UI
-    protected decimal monthlySavingsContribution;
-    protected decimal monthlyRetirementIncome;
+    protected decimal? monthlySavingsContribution;
+    protected decimal? monthlyRetirementIncome;
     protected int selectedSocialSecurityPayoutAge;
     protected int selectedSocialSecurityPayout;
     protected int retirementAge;
 
     //  Properties for 2 way bound components
-    public decimal MonthlySavingsContribution
+    public decimal? MonthlySavingsContribution
     { 
         get { return this.monthlySavingsContribution; }
         set
@@ -153,7 +153,7 @@ else
             InputParametersChange();
         }
     }
-    public decimal MonthlyRetirementIncome
+    public decimal? MonthlyRetirementIncome
     {
         get { return this.monthlyRetirementIncome; }
         set

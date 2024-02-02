@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /.~lock.HistoricalData.ods#
 /HistoricalData.ods
+/src/Components/Pages/AccountHolderEdit - Copy.razor

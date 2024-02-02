@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FinancialPlanner.Components.Models
 {
@@ -10,16 +11,21 @@ namespace FinancialPlanner.Components.Models
 
         [JsonPropertyName("id")]
         public string? id { get; set; }
+
         [JsonPropertyName("firstName")]
+        [Required]
         public string? FirstName { get; set; }
 
         [JsonPropertyName("lastName")]
+        [Required]
         public string? LastName { get; set; }
 
         [JsonPropertyName("dateOfBirth")]
+        [Required]
         public string? DateOfBirth { get; set; }
 
         [JsonPropertyName("accountStartingBalance")]
+        [Required]
         public decimal? AccountStartingBalance { get; set; }
 
         // Schedule from the Social Security Administration that one receives shortly before the age of 65
@@ -30,12 +36,14 @@ namespace FinancialPlanner.Components.Models
             set { this.socialSecurityPayouts = value; }
         }
         [JsonPropertyName("scenarios")]
+        [Required]
         public List<Scenario>? Scenarios
         {
             get { return this.scenarios; }
             set { this.scenarios = value; }
         }
         [JsonPropertyName("financialEvents")]
+        [Required]
         public List<FinancialEvent>? FinancialEvents
         {
             get { return this.financialEvents; }
@@ -51,6 +59,7 @@ namespace FinancialPlanner.Components.Models
             this.id = "";
             this.scenarios = new List<Scenario>();
             Scenario scenario = new Scenario();
+            scenario.PreRetirementMonthlySavingsContribution = 0;
             this.scenarios.Add(scenario);
 
             this.financialEvents = new List<FinancialEvent>();
@@ -92,27 +101,34 @@ namespace FinancialPlanner.Components.Models
     public class Scenario
     {
         [JsonPropertyName("name")]
+        [Required]
         public string Name { get; set; }
         //  Age when retiree stops pre-retirement monthly savings contributions and starts expected monthly retirement income
 
         [JsonPropertyName("retirementAge")]
+        [Required]
         public int RetirementAge { get; set; }
 
         [JsonPropertyName("expectedMonthlyRetirementIncome")]
-        public decimal ExpectedMonthlyRetirementIncome { get; set; }
+        [Required]
+        public decimal? ExpectedMonthlyRetirementIncome { get; set; }
 
         [JsonPropertyName("preRetirementMonthlySavingsContribution")]
-        public decimal PreRetirementMonthlySavingsContribution { get; set; }
+        [Required]
+        public decimal? PreRetirementMonthlySavingsContribution { get; set; }
 
         // Selected from the SocialSecurityPayout list to be used in simulation runs
         [JsonPropertyName("socialSecurityPayoutAge")]
+        [Required]
         public int SocialSecurityPayoutAge { get; set; }
     }
 
     public class SocialSecurityPayout
     {
         [JsonPropertyName("startingAge")]
+        [Required]
         public int StartingAge { get; set; }
+        [Required]
 
         [JsonPropertyName("monthlyPayout")]
         public decimal MonthlyPayout { get; set;}
@@ -130,6 +146,7 @@ namespace FinancialPlanner.Components.Models
             get { return this.id; }
         }
         [JsonPropertyName("type")]
+        [Required]
         public string Type 
         {
             get { return this.type; }
@@ -137,6 +154,7 @@ namespace FinancialPlanner.Components.Models
         }
 
         [JsonPropertyName("year")]
+        [Required]
         public int Year { get; set; }
 
         [JsonPropertyName("payload")]
