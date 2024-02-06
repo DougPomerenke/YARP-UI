@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Pages\AccountHolderEdit - Copy.razor" />
     <Content Remove="Components\Pages\RunParameterDetails.razor" />
   </ItemGroup>
 

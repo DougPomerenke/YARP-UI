@@ -54,29 +54,48 @@ else
         <AccordionItem>
             <TitleTemplate><Icon Name="IconName.Toggles" Class="me-1" />Scenarios</TitleTemplate>
             <Content>
-                <table class="table table-bordered">
-                <thead>
-                    <tr>
-                    <th>Scenario Name</th>
-                    <th>Retirement Age</th>
-                    <th>Social Security Payout Age</th>
-                    <th>Expected Monthly Retirement Income</th>
-                    <th>Pre Retirement Monthly Savings Contribution</th>
-                    </tr>
-                </thead>
-                <tbody>
+
+                <div class="mb-2">
                 @foreach (var scenario in AccountHolderModel!.Scenarios)
                 {
-                    <tr>
-                        <td><InputText  @bind-Value="scenario!.Name" class="form-control"></InputText></td>
-                        <td><InputNumber  @bind-Value="scenario!.RetirementAge" class="form-control"></InputNumber></td>
-                        <td><InputNumber  @bind-Value="scenario!.SocialSecurityPayoutAge" class="form-control"></InputNumber></td>
-                        <td><InputNumber  @bind-Value="scenario!.ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber></td>
-                        <td><InputNumber  @bind-Value="scenario!.PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber></td>
-                     </tr>
+                    <table class="table">
+                    <tbody>
+
+                    <td>
+                    <label for="name" class="form-label">Name</label>
+                    <InputText id="name"  @bind-Value="scenario!.Name" class="form-control">Name</InputText>
+                    <ValidationMessage For="() => scenario!.Name" class="text-danger" />
+                    </td>
+
+                    <td>
+                    <label for="retirementage" class="form-label">RetirementAge</label>
+                    <InputNumber id="retirementage" @bind-Value="scenario!.RetirementAge" class="form-control"></InputNumber>
+                    <ValidationMessage For="() => scenario!.RetirementAge" class="text-danger" />
+                    </td>
+
+                    <td>
+                    <label for="socialsecuritypayoutage" class="form-label">Social Security Payout Age</label>
+                    <InputNumber id="socialsecuritypayoutage"  @bind-Value="scenario!.SocialSecurityPayoutAge" class="form-control"></InputNumber>
+                    <ValidationMessage For="() => scenario!.SocialSecurityPayoutAge" class="text-danger" />
+                    </td>
+
+                    <td>
+                    <label for="expectedmonthlyretirementincome" class="form-label">Expected Monthly Retirement Income</label>
+                    <InputNumber id="expectedmonthlyretirementincome" @bind-Value="scenario!.ExpectedMonthlyRetirementIncome" class="form-control"></InputNumber>
+                    <ValidationMessage For="() => scenario!.ExpectedMonthlyRetirementIncome" class="text-danger" />
+                    </td>
+
+                    <td>
+                    <label for="preretirementmonthlysavingscontribution" class="form-label">Pre Retirement Monthly Saving sContribution</label>
+                    <InputNumber id="preretirementmonthlysavingscontribution" @bind-Value="scenario!.PreRetirementMonthlySavingsContribution" class="form-control"></InputNumber>
+                    <ValidationMessage For="() => scenario!.PreRetirementMonthlySavingsContribution" class="text-danger" />
+                    </td>
+
+                    </tbody>
+                    </table>
                 }
-                </tbody>
-                </table>
+                </div>
+
 
             </Content>
         </AccordionItem>
@@ -87,25 +106,37 @@ else
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                    <th>Event Type</th>
-                    <th>Starting Year</th>
-                    <th>Value</th>
-                    <th>Value</th>
+                    <td>Event Type</td>
+                    <td>Starting Year</td>
+                    <td>Value</td>
+                    <td>Value</td>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach (var financialEvent in AccountHolderModel!.FinancialEvents)
                 {
                     <tr>
-                        <td><InputText id="lifeeventdisplaymessage" @bind-Value="financialEvent!.Type" class="form-control"></InputText></td>
-                        <td><InputNumber id="lifeeventstartingyear" @bind-Value="financialEvent!.Year" class="form-control"></InputNumber></td>
+                        <td>
+                            @* <label for="lifeeventdisplaymessage" class="form-label">Financial Event Type</label> *@
+                            <InputText id="lifeeventdisplaymessage" @bind-Value="financialEvent!.Type" class="form-control"></InputText>
+                            <ValidationMessage For="() => financialEvent!.Type" class="text-danger" />
+                        </td>
+                        <td>
+                            
+                            <InputNumber id="lifeeventstartingyear" @bind-Value="financialEvent!.Year" class="form-control"></InputNumber>
+                            <ValidationMessage For="() => financialEvent!.Year" class="text-danger" />
+                        </td>
 
                         @if(financialEvent.Type==FinancialEventType.InflationRateChange.ToString() || financialEvent.Type==FinancialEventType.InvestmentYieldChange.ToString() || financialEvent.Type==FinancialEventType.LoanPayOffYear.ToString())
                         {
                                 <td><InputNumber id="payloaditem0" @bind-Value="financialEvent!.Payload[0]" class="form-control"></InputNumber></td>
+                                <ValidationMessage For="() => financialEvent!.Payload[0]" class="text-danger" />
                                 @if(financialEvent.Payload.Length>1)
                                 {
-                                        <td><InputNumber id="payloaditem1" @bind-Value="financialEvent!.Payload[1]" class="form-control"></InputNumber></td>
+                                        <td>
+                                        <InputNumber id="payloaditem1" @bind-Value="financialEvent!.Payload[1]" class="form-control"></InputNumber>
+                                        <ValidationMessage For="() => financialEvent!.Payload[1]" class="text-danger" />
+                                        </td>
                                 }
                                 else
                                 {
@@ -167,8 +198,8 @@ else
             <table class="table table-bordered">
             <thead>
                 <tr>
-                <th>Age</th>
-                <th>Monthly Payment</th>
+                <td>Age</td>
+                <td>Monthly Payment</td>
                 </tr>
             </thead>
            <tbody>
@@ -177,7 +208,10 @@ else
             {
                 <tr>
                 <td><label class="form-control">@po.StartingAge</label></td>
-                <td><InputNumber id="socialsecuritypayouts" @bind-Value="po.MonthlyPayout" class="form-control"></InputNumber></td>
+                <td><InputNumber id="socialsecuritypayouts" @bind-Value="po.MonthlyPayout" class="form-control"></InputNumber>
+                <ValidationMessage For="() => po.MonthlyPayout" class="text-danger" />
+                </td>
+
                 </tr>
             }
             </tbody>
