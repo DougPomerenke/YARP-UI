@@ -109,9 +109,17 @@ namespace FinancialPlanner.Services
 
             pathSetting = pathSetting + accountHolder.id;
             Uri uri = new Uri(pathSetting);
-            
-            var result = await _httpClient.PutAsJsonAsync<AccountHolder>(uri, accountHolder);
-            await SetAccountHolders(result);
+
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync<AccountHolder>(uri, accountHolder);
+                await SetAccountHolders(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
 
         public async Task DeleteAccountHolder(string id)
